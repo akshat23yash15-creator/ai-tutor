@@ -163,8 +163,8 @@ export const Learn: React.FC = () => {
         </div>
 
         {/* ── CENTER: LESSON CONTENT (6 COLS) ──────────────────── */}
-        <div className="lg:col-span-6 space-y-6">
-          <div className="p-6 md:p-8 rounded-3xl bg-card border border-border shadow-xl space-y-6">
+        <div className="lg:col-span-6 space-y-4">
+          <div className="p-6 md:p-8 rounded-3xl bg-card border border-border shadow-xl space-y-6 max-h-[calc(100vh-10rem)] overflow-y-auto pr-3 scrollbar-thin">
 
             {/* Title & summary */}
             <div className="space-y-2">
