@@ -11,8 +11,26 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      "/api": {
+        target: "https://learnai-ml-backend.onrender.com",
+        changeOrigin: true,
+        secure: false,
+        headers: {
+          Origin: "https://ai-tutor-mauve-kappa.vercel.app"
+        }
+      },
+      "/health": {
+        target: "https://learnai-ml-backend.onrender.com",
+        changeOrigin: true,
+        secure: false,
+        headers: {
+          Origin: "https://ai-tutor-mauve-kappa.vercel.app"
+        }
+      }
+    }
   },
-  envDir: "../",
+  envDir: "./",
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {

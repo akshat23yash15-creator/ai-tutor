@@ -120,6 +120,40 @@ You show the computer thousands of examples, and it discovers the recipe on its 
     ]
   },
   {
+    keywords: ["fine-tuning", "fine tuning", "rag vs", "difference between rag", "difference between fine"],
+    response: `### RAG vs. Fine-Tuning: The Core Difference
+
+- **RAG (Open-Book Exam):** You provide the model with relevant reference sheets (retrieved document chunks) at query time. Best for rapidly changing data, private company knowledge bases, and citing exact source documents with near-zero hallucinations.
+- **Fine-Tuning (Internalizing a Skill / Tone):** You update the model's neural weights on specialized pairs. Best for teaching a specific voice, constrained output formats (e.g. specialized JSON / SQL), or adapting to niche jargon.
+
+**Rule of Thumb:**
+- Need updated facts and verifiable sources? $\\rightarrow$ **Use RAG**.
+- Need a model to adopt a specific tone or output format? $\\rightarrow$ **Fine-tune**.`,
+    suggestedFollowUp: [
+      "Can we combine RAG and Fine-Tuning?",
+      "What vector databases are commonly used in RAG?",
+      "Give me a quiz on RAG systems"
+    ]
+  },
+  {
+    keywords: ["quiz on rag", "rag quiz", "rag question", "test me on rag"],
+    response: `Here is a checkpoint diagnostic question on RAG architectures:
+
+**Question:** In a production RAG pipeline, why are documents partitioned into smaller overlapping chunks (e.g. 250–500 tokens) before creating vector embeddings?
+
+1. Embeddings of huge documents dilute semantic precision and introduce noisy context into the prompt
+2. Vector databases cannot store vectors with dimensions higher than 50
+3. Chunking is mandatory to convert text into binary numbers
+4. Smaller chunks prevent the retriever from running vector similarity
+
+*What's your answer?*`,
+    suggestedFollowUp: [
+      "Is it option 1?",
+      "What is cosine similarity in vector search?",
+      "Explain RAG vs Fine-Tuning"
+    ]
+  },
+  {
     keywords: ["rag", "retrieval", "vector", "embedding", "llm", "genai", "generative ai"],
     response: `**Retrieval-Augmented Generation (RAG)** provides an external memory book for Large Language Models.
 

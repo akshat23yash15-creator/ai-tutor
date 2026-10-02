@@ -149,55 +149,53 @@ Ask me anything about this topic, request an intuitive explanation, ask for an e
 
     let replyHandled = false;
 
-    // Call live ML backend if online
-    if (isOnline) {
-      try {
-        const res = await tutorChat(backendLearnerId, {
-          message: query,
-          conversation_id: conversationIdRef.current,
-          mode,
-          current_topic: activeConversation || currentPathNode?.title
-        });
+    // Always attempt live ML backend first
+    try {
+      const res = await tutorChat(backendLearnerId, {
+        message: query,
+        conversation_id: conversationIdRef.current,
+        mode,
+        current_topic: activeConversation || currentPathNode?.title
+      });
 
-        if (res.success && res.data) {
-          // Persist conversation ID for continuous multi-turn dialogue
-          if (res.data.conversationId) {
-            conversationIdRef.current = res.data.conversationId;
-          }
-
-          const uiData = mapBackendTutorResponseToUI(res.data);
-          const tutorMessage: ChatMessage = {
-            id: `tut-${Date.now()}`,
-            sender: "tutor",
-            text: uiData.reply,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            followUps: uiData.followUps,
-            quiz: uiData.quiz,
-            mode: res.data.mode
-          };
-
-          setMessages((prev) => [...prev, tutorMessage]);
-          replyHandled = true;
-        } else if (res.fallback_data && res.fallback_data.message) {
-          // Usable fallback data provided by backend
-          const tutorMessage: ChatMessage = {
-            id: `tut-${Date.now()}`,
-            sender: "tutor",
-            text: res.fallback_data.message,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            followUps: res.fallback_data.followUpSuggestions || [],
-            quiz: res.fallback_data.checkpointQuestion
-          };
-          setMessages((prev) => [...prev, tutorMessage]);
-          replyHandled = true;
-        } else if (res.error?.code === "RATE_LIMITED" || res.error?.code === "MODEL_RATE_LIMIT") {
-          toast.warning("Please wait a moment before trying again.", {
-            description: res.error.message || "Tutor engine rate limit reached."
-          });
+      if (res.success && res.data) {
+        // Persist conversation ID for continuous multi-turn dialogue
+        if (res.data.conversationId) {
+          conversationIdRef.current = res.data.conversationId;
         }
-      } catch (err) {
-        console.warn("Live tutor request failed, using mock fallback:", err);
+
+        const uiData = mapBackendTutorResponseToUI(res.data);
+        const tutorMessage: ChatMessage = {
+          id: `tut-${Date.now()}`,
+          sender: "tutor",
+          text: uiData.reply,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          followUps: uiData.followUps,
+          quiz: uiData.quiz,
+          mode: res.data.mode
+        };
+
+        setMessages((prev) => [...prev, tutorMessage]);
+        replyHandled = true;
+      } else if (res.fallback_data && res.fallback_data.message) {
+        // Usable fallback data provided by backend
+        const tutorMessage: ChatMessage = {
+          id: `tut-${Date.now()}`,
+          sender: "tutor",
+          text: res.fallback_data.message,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          followUps: res.fallback_data.followUpSuggestions || [],
+          quiz: res.fallback_data.checkpointQuestion
+        };
+        setMessages((prev) => [...prev, tutorMessage]);
+        replyHandled = true;
+      } else if (res.error?.code === "RATE_LIMITED" || res.error?.code === "MODEL_RATE_LIMIT") {
+        toast.warning("Please wait a moment before trying again.", {
+          description: res.error.message || "Tutor engine rate limit reached."
+        });
       }
+    } catch (err) {
+      console.warn("Live tutor request failed, using mock fallback:", err);
     }
 
     // Fallback to local mock response if backend was unavailable or failed

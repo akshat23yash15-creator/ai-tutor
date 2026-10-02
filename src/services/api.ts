@@ -12,12 +12,19 @@ import {
 } from "./backendTypes";
 
 // Base URL for LearnAI ML Backend
-const ML_API_BASE = import.meta.env.VITE_ML_API_URL || "https://learnai-ml-backend.onrender.com";
-const TIMEOUT_MS = 45000; // 45 seconds tolerance for Render cold starts
-
 export function getMlApiUrl(): string {
-  return ML_API_BASE;
+  // When running in browser on localhost or 127.0.0.1, use relative paths to route through
+  // Vite's dev server proxy which attaches the allowed Origin header (bypassing Render CORS)
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ) {
+    return "";
+  }
+  return import.meta.env.VITE_ML_API_URL || "https://learnai-ml-backend.onrender.com";
 }
+
+const TIMEOUT_MS = 45000; // 45 seconds tolerance for Render cold starts
 
 /**
  * Single universal API caller for POST /api/v1/learnai
@@ -30,7 +37,8 @@ export async function callLearnAI<T = any>(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-  const endpoint = `${ML_API_BASE.replace(/\/+$/, "")}/api/v1/learnai`;
+  const baseUrl = getMlApiUrl();
+  const endpoint = baseUrl ? `${baseUrl.replace(/\/+$/, "")}/api/v1/learnai` : `/api/v1/learnai`;
 
   try {
     const response = await fetch(endpoint, {
@@ -94,7 +102,8 @@ export async function callLearnAI<T = any>(
 export async function checkHealth(): Promise<BackendResponse<BackendHealthData>> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s health check
-  const endpoint = `${ML_API_BASE.replace(/\/+$/, "")}/health`;
+  const baseUrl = getMlApiUrl();
+  const endpoint = baseUrl ? `${baseUrl.replace(/\/+$/, "")}/health` : `/health`;
 
   try {
     const response = await fetch(endpoint, { signal: controller.signal });
