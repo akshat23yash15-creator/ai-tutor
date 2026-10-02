@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLearner } from "@/contexts/LearnerContext";
 import { getTutorReply } from "@/data/mockTutorResponses";
+import { PathNode } from "@/data/mockLearningPath";
 import { DemoProfileSwitcher } from "@/components/common/DemoProfileSwitcher";
 import { tutorChat } from "@/services/api";
 import { mapBackendTutorResponseToUI } from "@/services/adapters";
@@ -40,31 +41,63 @@ interface ChatMessage {
 }
 
 export const Tutor: React.FC = () => {
-  const { profile, backendLearnerId, isOnline } = useLearner();
+  const {
+    profile,
+    backendLearnerId,
+    isOnline,
+    learningPath,
+    activeLearningTopic,
+    setActiveLearningTopic
+  } = useLearner();
   const conversationIdRef = useRef<string | undefined>(undefined);
 
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
+  // Determine current learning-path node based on priority:
+  // 1. activeLearningTopic if set by user selection
+  // 2. First node with status === "current"
+  // 3. Otherwise first node with status === "adapted"
+  // 4. Otherwise first node with status === "recommended"
+  // 5. Otherwise first available learningPath node
+  const currentPathNode =
+    (activeLearningTopic ? learningPath.find((node) => node.title === activeLearningTopic) : null) ||
+    learningPath.find((node) => node.status === "current") ||
+    learningPath.find((node) => node.status === "adapted") ||
+    learningPath.find((node) => node.status === "recommended") ||
+    learningPath[0];
+
+  const currentTopic = currentPathNode?.title || activeLearningTopic || "Machine Learning Concepts";
+  const currentReason = currentPathNode?.description || "Core milestone dynamically scheduled by your adaptive learning path.";
+
+  const buildInitialMessage = (node?: PathNode, learnerProfile = profile): ChatMessage => {
+    const topic = node?.title || currentTopic;
+    const reason = node?.description || currentReason;
+    return {
       id: "msg-welcome",
       sender: "tutor",
-      text: `Hello **${profile.name}**! I'm your dedicated AI Tutor. 
+      text: `Hello **${learnerProfile.name}**! I'm your dedicated AI Tutor. 
 
-I'm calibrated for your goal of **${profile.goal}**, assessed at **${profile.level}** level, with active focus on **Bias vs Variance & Optimization**.
+I'm calibrated for your goal of **${learnerProfile.goal}**, assessed at **${learnerProfile.level}** level, with active focus on **${topic}**.
 
-Ask me any concept question, request intuitive analogies, or ask for practice drills!`,
+**Why you're learning this:**
+${reason}
+
+Ask me anything about this topic, request an intuitive explanation, ask for an example, or practice it with me!`,
       timestamp: "Just now",
       followUps: [
-        "Explain overfitting and why it happens",
-        "Explain gradient descent intuition",
-        "Explain this like I'm a beginner",
-        "Give me a practice question"
+        `Explain ${topic} from the basics`,
+        `Give me an intuitive example of ${topic}`,
+        `Explain why I need to learn ${topic}`,
+        `Give me a practice question on ${topic}`
       ]
-    }
+    };
+  };
+
+  const [activeConversation, setActiveConversation] = useState<string>(currentTopic);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    buildInitialMessage(currentPathNode, profile)
   ]);
 
   const [inputText, setInputText] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [activeConversation, setActiveConversation] = useState<string>("Overfitting & Gradient Descent");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll on new messages
@@ -72,10 +105,15 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // Reset conversation if learner changes
+  // Synchronize active topic & welcome message if learner, selected topic, or current path node changes
   useEffect(() => {
-    conversationIdRef.current = undefined;
-  }, [backendLearnerId]);
+    if (currentPathNode) {
+      setActiveConversation(currentPathNode.title);
+      conversationIdRef.current = undefined;
+      setMessages([buildInitialMessage(currentPathNode, profile)]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backendLearnerId, activeLearningTopic, currentPathNode?.id, profile.name]);
 
   const handleSendMessage = async (textToSend?: string, specificMode?: string) => {
     const query = textToSend || inputText;
@@ -118,7 +156,7 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
           message: query,
           conversation_id: conversationIdRef.current,
           mode,
-          current_topic: activeConversation
+          current_topic: activeConversation || currentPathNode?.title
         });
 
         if (res.success && res.data) {
@@ -185,21 +223,8 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
 
   const handleStartNewChat = () => {
     conversationIdRef.current = undefined;
-    setMessages([
-      {
-        id: `msg-${Date.now()}`,
-        sender: "tutor",
-        text: `New conversation started! What AI topic would you like to explore next?`,
-        timestamp: "Just now",
-        followUps: [
-          "Explain Transformers & Self-Attention",
-          "What is RAG vs Fine-Tuning?",
-          "How does backpropagation work?",
-          "Test my knowledge on Machine Learning"
-        ]
-      }
-    ]);
-    setActiveConversation("New Topic Session");
+    setActiveConversation(currentTopic);
+    setMessages([buildInitialMessage(currentPathNode, profile)]);
   };
 
   return (
@@ -251,28 +276,28 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 <button
-                  onClick={() => handleSendMessage("Explain this like I'm a beginner with intuitive analogies.", "simplify")}
+                  onClick={() => handleSendMessage(`Explain ${activeConversation} simply with intuitive analogies.`, "simplify")}
                   className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
                 >
                   <Sparkles className="w-3 h-3 text-primary shrink-0" />
                   <span className="truncate">Explain Simpler</span>
                 </button>
                 <button
-                  onClick={() => handleSendMessage("Give me a real-world production example of this concept.", "example")}
+                  onClick={() => handleSendMessage(`Give me a real-world production example of ${activeConversation}.`, "example")}
                   className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
                 >
                   <Lightbulb className="w-3 h-3 text-amber-400 shrink-0" />
                   <span className="truncate">Give Example</span>
                 </button>
                 <button
-                  onClick={() => handleSendMessage("Show me a clean Python implementation with comments.", "code")}
+                  onClick={() => handleSendMessage(`Show me a clean Python implementation of ${activeConversation}.`, "code")}
                   className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
                 >
                   <Code2 className="w-3 h-3 text-blue-400 shrink-0" />
                   <span className="truncate">Show Code</span>
                 </button>
                 <button
-                  onClick={() => handleSendMessage("Give me a hint on my current topic without spoiling the answer.", "hint")}
+                  onClick={() => handleSendMessage(`Give me a hint on ${activeConversation} without spoiling the answer.`, "hint")}
                   className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
                 >
                   <HelpCircle className="w-3 h-3 text-emerald-400 shrink-0" />
@@ -283,30 +308,28 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
 
             <div className="space-y-1 pt-2 border-t border-border">
               <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-2 pb-1">
-                Recent Sessions
+                Learning Path Topics
               </div>
 
-              {[
-                "Overfitting & Gradient Descent",
-                "NumPy Vectorization Speedups",
-                "Model Evaluation Metrics",
-                "RAG Semantic Embeddings"
-              ].map((topic, i) => (
+              {learningPath.slice(0, 6).map((node) => (
                 <button
-                  key={i}
+                  key={node.id}
                   onClick={() => {
-                    setActiveConversation(topic);
+                    setActiveLearningTopic(node.title);
+                    setActiveConversation(node.title);
                     conversationIdRef.current = undefined;
+                    setMessages([buildInitialMessage(node, profile)]);
                   }}
                   className={cn(
                     "w-full p-2.5 rounded-xl text-xs font-semibold text-left flex items-center gap-2 transition-all truncate",
-                    activeConversation === topic
+                    activeConversation === node.title
                       ? "bg-primary/10 text-primary border border-primary/20 font-bold"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
+                  title={node.title}
                 >
                   <MessageSquare className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">{topic}</span>
+                  <span className="truncate">{node.title}</span>
                 </button>
               ))}
             </div>
@@ -317,15 +340,16 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
               </div>
 
               {[
-                "Explain gradient descent",
-                "Why does overfitting happen?",
-                "Give me a practice question",
-                "Why am I learning this next?"
+                `Explain ${activeConversation} from the basics`,
+                `Give me an intuitive example of ${activeConversation}`,
+                `Give me a practice question on ${activeConversation}`,
+                `Why is ${activeConversation} important?`
               ].map((prompt, i) => (
                 <button
                   key={i}
                   onClick={() => handleSendMessage(prompt)}
-                  className="w-full p-2 rounded-xl text-[11px] text-left text-muted-foreground hover:text-primary hover:bg-primary/5 border border-border/60 transition-colors"
+                  className="w-full p-2 rounded-xl text-[11px] text-left text-muted-foreground hover:text-primary hover:bg-primary/5 border border-border/60 transition-colors truncate"
+                  title={prompt}
                 >
                   "{prompt}"
                 </button>
@@ -352,10 +376,10 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
             <button
               onClick={() => {
                 conversationIdRef.current = undefined;
-                setMessages([]);
+                setMessages([buildInitialMessage(currentPathNode, profile)]);
               }}
               className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-              title="Clear transcript"
+              title="Reset conversation"
             >
               <Trash2 className="w-4 h-4" />
             </button>

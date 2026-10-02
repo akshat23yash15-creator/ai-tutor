@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLearner } from "@/contexts/LearnerContext";
 import { DemoProfileSwitcher } from "@/components/common/DemoProfileSwitcher";
@@ -15,16 +15,50 @@ import {
   Play,
   Layers,
   ChevronDown,
-  Info
+  Info,
+  Bot
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const LearningPath: React.FC = () => {
   const navigate = useNavigate();
-  const { learningPath, profile, activeProfileId } = useLearner();
-  const [selectedNodeId, setSelectedNodeId] = useState<string>(learningPath[4]?.id || learningPath[0]?.id);
+  const { learningPath, profile, activeLearningTopic, setActiveLearningTopic } = useLearner();
 
-  const selectedNode = learningPath.find((n) => n.id === selectedNodeId) || learningPath[0];
+  // Primary active node: current -> adapted -> recommended -> first
+  const defaultNode =
+    learningPath.find((n) => n.status === "current") ||
+    learningPath.find((n) => n.status === "adapted") ||
+    learningPath.find((n) => n.status === "recommended") ||
+    learningPath[0];
+
+  const [selectedNodeId, setSelectedNodeId] = useState<string>(() => {
+    if (activeLearningTopic) {
+      const match = learningPath.find((n) => n.title === activeLearningTopic);
+      if (match) return match.id;
+    }
+    return defaultNode?.id || learningPath[0]?.id || "";
+  });
+
+  // Keep selected node synchronized when learning path updates or activeLearningTopic is selected
+  useEffect(() => {
+    if (activeLearningTopic) {
+      const match = learningPath.find((n) => n.title === activeLearningTopic);
+      if (match) {
+        setSelectedNodeId(match.id);
+        return;
+      }
+    }
+    const current =
+      learningPath.find((n) => n.status === "current") ||
+      learningPath.find((n) => n.status === "adapted") ||
+      learningPath.find((n) => n.status === "recommended") ||
+      learningPath[0];
+    if (current && (!selectedNodeId || !learningPath.some((n) => n.id === selectedNodeId))) {
+      setSelectedNodeId(current.id);
+    }
+  }, [learningPath, activeLearningTopic]);
+
+  const selectedNode = learningPath.find((n) => n.id === selectedNodeId) || defaultNode || learningPath[0];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -240,6 +274,18 @@ export const LearningPath: React.FC = () => {
                 <span>Launch Lesson & Interactive Tools</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
+
+              <button
+                id="btn-learn-with-tutor"
+                onClick={() => {
+                  setActiveLearningTopic(selectedNode.title);
+                  navigate("/tutor");
+                }}
+                className="w-full py-3 rounded-2xl border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-primary/10 cursor-pointer"
+              >
+                <Bot className="w-4 h-4" />
+                <span>Learn with AI Tutor</span>
+              </button>
 
               <Link
                 to="/practice"

@@ -179,8 +179,13 @@ export function mapBackendPathToPathNodes(backendNodes: BackendPathNode[] = []):
       ? `${Math.round(n.estimatedMinutes / 60)} hours`
       : `${n.estimatedMinutes || 20} min`;
 
-    let status: PathNode["status"] = n.status as PathNode["status"];
-    if (n.status === "adapted") status = "adapted";
+    let status: PathNode["status"] = "locked";
+    if (n.status === "completed" || n.status === "mastered") status = "completed";
+    else if (n.status === "current" || n.status === "in_progress") status = "current";
+    else if (n.status === "adapted" || n.isRevision) status = "adapted";
+    else if (n.status === "recommended") status = "recommended";
+    else if (n.status === "locked") status = "locked";
+    else status = (n.status as PathNode["status"]) || "locked";
 
     return {
       id: n.id || `node-${idx + 1}`,

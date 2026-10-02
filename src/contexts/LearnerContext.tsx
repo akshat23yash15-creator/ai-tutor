@@ -48,6 +48,8 @@ export interface LearnerContextType {
   isOnline: boolean;
   isLoading: boolean;
   isWakingUp: boolean;
+  activeLearningTopic: string | null;
+  setActiveLearningTopic: (topic: string | null) => void;
   switchDemoProfile: (id: "beginner" | "intermediate" | "advanced") => void;
   markLessonComplete: (lessonId: string) => void;
   recordQuizScore: (
@@ -108,6 +110,7 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isOnline, setIsOnline] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isWakingUp, setIsWakingUp] = useState<boolean>(false);
+  const [activeLearningTopic, setActiveLearningTopic] = useState<string | null>(null);
 
   // Guard to ensure fallback toast is shown only once per session
   const fallbackToastShown = useRef<boolean>(false);
@@ -245,6 +248,7 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Switch demo profiles
   const switchDemoProfile = (id: "beginner" | "intermediate" | "advanced") => {
     setActiveProfileId(id);
+    setActiveLearningTopic(null);
 
     // Instant optimistic update with mock data
     const localFallback = DEMO_PROFILES[id] || DEMO_PROFILES.intermediate;
@@ -566,6 +570,7 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const resetToDefault = async () => {
     setIsLoading(true);
+    setActiveLearningTopic(null);
     if (isOnline) {
       try {
         const res = await resetLearner(backendLearnerId);
@@ -605,6 +610,8 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isOnline,
         isLoading,
         isWakingUp,
+        activeLearningTopic,
+        setActiveLearningTopic,
         switchDemoProfile,
         markLessonComplete,
         recordQuizScore,
