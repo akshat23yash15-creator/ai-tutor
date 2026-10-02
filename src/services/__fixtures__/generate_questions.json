@@ -1,0 +1,94 @@
+{
+  "success": true,
+  "action": "generate_questions",
+  "data": {
+    "count": 2,
+    "requested_count": 2,
+    "concept": "bias_variance",
+    "concept_name": "Bias vs Variance Tradeoff",
+    "selection_reason": "weak",
+    "difficulty": "Medium",
+    "difficulty_reason": "Mixed recent results on Bias vs Variance Tradeoff; staying at Medium.",
+    "questions": [
+      {
+        "id": "gen-6dc97e2f21",
+        "category": "Machine Learning",
+        "difficulty": "Medium",
+        "conceptId": "bias_variance",
+        "conceptTested": "Bias vs Variance Tradeoff",
+        "title": "Fixing Overfitting in a Sports Performance Model",
+        "question": "A sports analyst uses scikit‑learn to predict a basketball player's points per game (PPG) from minutes played, usage rate, and age. The code below trains a Ridge regression model:\n\nThe output shows `train_score = 0.98` and `val_score = 0.55`. Which single change is most appropriate to address the observed issue?",
+        "codeSnippet": "from sklearn.linear_model import Ridge\nmodel = Ridge(alpha=0.0)  # no regularization\nmodel.fit(X_train, y_train)\ntrain_score = model.score(X_train, y_train)\nval_score   = model.score(X_val, y_val)",
+        "options": [
+          "Switch to `LinearRegression()` with no regularization.",
+          "Collect more training data before changing the model.",
+          "Increase `alpha` to add regularization, e.g., `Ridge(alpha=10.0)`.",
+          "Decrease `alpha` to reduce regularization, e.g., `Ridge(alpha=0.001)`."
+        ],
+        "correctIndex": 2,
+        "explanation": "\"Increase `alpha` to add regularization, e.g., `Ridge(alpha=10.0)`.\" The huge gap between training (0.98) and validation (0.55) scores indicates high variance (overfitting). Adding L2 regularization (larger alpha) directly reduces variance. The other options are wrong: decreasing alpha removes regularization, worsening overfit; plain LinearRegression has no regularization, also worsening; merely collecting more data may help but is less immediate than fixing the clear over‑regularization issue.",
+        "hint": "A large train‑val score gap points to variance; think about how Ridge controls variance.",
+        "whyThisQuestion": "Generated because you scored 54% on Bias vs Variance Tradeoff.",
+        "recommendedNextDifficulty": "Medium",
+        "scenarioDomain": "sports analytics",
+        "questionAngle": "scenario_diagnosis",
+        "source": "pool",
+        "verified": true,
+        "poolTier": "concept+difficulty"
+      },
+      {
+        "id": "gen-2d0ea78f90",
+        "category": "Machine Learning",
+        "difficulty": "Medium",
+        "conceptId": "bias_variance",
+        "conceptTested": "Bias vs Variance Tradeoff",
+        "title": "Diagnosing Bias‑Variance from Learning Curves in Crop Yield Prediction",
+        "question": "During training a gradient‑boosted model to predict wheat yield, the following learning curves are observed: Training MSE drops steadily to 0.5 and stays low; Validation MSE drops until epoch 30, then rises to 1.2 by the end of training. Which bias‑variance condition does this pattern indicate?",
+        "codeSnippet": null,
+        "options": [
+          "The model is underfitting (high bias, low variance)",
+          "Both bias and variance are high (poor fit)",
+          "The model is overfitting (low bias, high variance)",
+          "Both bias and variance are low (well‑balanced)"
+        ],
+        "correctIndex": 2,
+        "explanation": "\"The model is overfitting (low bias, high variance)\" is correct because the training error continues to improve while validation error starts increasing, a classic sign of high variance after the model has captured noise. The other options are wrong: \"Underfitting\" would show high training error that does not improve; \"Both low\" would show both curves decreasing and staying close; \"Both high\" would show high errors on both sets without the divergence pattern.",
+        "hint": "Look at how the training and validation errors diverge as training progresses.",
+        "whyThisQuestion": "Generated because you scored 54% on Bias vs Variance Tradeoff.",
+        "recommendedNextDifficulty": "Medium",
+        "scenarioDomain": "agriculture",
+        "questionAngle": "curve_or_metric_diagnosis",
+        "source": "pool",
+        "verified": true,
+        "poolTier": "concept+difficulty"
+      }
+    ],
+    "sources": {
+      "llm": 0,
+      "pool": 2,
+      "fallback": 0
+    },
+    "generation": {
+      "model": "openai/gpt-oss-120b",
+      "verifier_model": "openai/gpt-oss-20b",
+      "verification_enabled": true,
+      "llm_calls": 2,
+      "verify_calls": 1,
+      "verified": 0,
+      "rejected": 4,
+      "rejection_issues": [
+        "Question 1 (manufacturing, code_debugging): distractor_reasons must contain exactly 3 non-empty reasons, one per wrong option.",
+        "Tuning RandomForest to Reduce Bias in Intrusion Detection: more than one option is defensible: Both increasing max_depth and decreasing min_samples_split would reduce bias",
+        "Question 1 (manufacturing, code_debugging): explanation/hint must not refer to options by letter or position (options are shuffled).",
+        "Question 2 (cybersecurity, hyperparameter_tuning): explanation/hint must not refer to options by letter or position (options are shuffled)."
+      ],
+      "latency_ms": 5704
+    }
+  },
+  "error": {
+    "code": "VERIFICATION_SHORTFALL",
+    "message": "2 of 2 question(s) were served without fresh generation (2 from LearnAI's verified question pool) because some generated questions failed independent answer verification.",
+    "details": null
+  },
+  "fallback_data": null
+}

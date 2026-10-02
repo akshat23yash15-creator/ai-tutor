@@ -1,0 +1,499 @@
+{
+  "success": true,
+  "action": "get_path",
+  "data": {
+    "goal": "ML Engineer",
+    "goalLabel": "become an ML Engineer",
+    "targets": [
+      "pandas_dataframes",
+      "linear_regression",
+      "gradient_descent",
+      "bias_variance",
+      "overfitting",
+      "regularization",
+      "decision_trees",
+      "confusion_matrix_roc",
+      "cross_validation",
+      "neural_networks",
+      "backpropagation",
+      "cnns"
+    ],
+    "nodes": [
+      {
+        "id": "node-python-basics",
+        "conceptId": "python_basics",
+        "title": "Python Basics (Variables, Loops, Functions)",
+        "category": "Python",
+        "status": "completed",
+        "progress": 100,
+        "mastery": 92,
+        "estimatedMinutes": 0,
+        "reason": "Completed: mastery 92 over 30 practice questions.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [],
+        "foundationFor": null,
+        "order": 1
+      },
+      {
+        "id": "node-python-data-structures",
+        "conceptId": "python_data_structures",
+        "title": "Python Data Structures",
+        "category": "Python",
+        "status": "completed",
+        "progress": 100,
+        "mastery": 90,
+        "estimatedMinutes": 0,
+        "reason": "Completed: mastery 90 over 25 practice questions.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "python_basics"
+        ],
+        "foundationFor": null,
+        "order": 2
+      },
+      {
+        "id": "node-numpy-arrays",
+        "conceptId": "numpy_arrays",
+        "title": "NumPy Arrays & Vectorization",
+        "category": "Python",
+        "status": "completed",
+        "progress": 100,
+        "mastery": 86,
+        "estimatedMinutes": 0,
+        "reason": "Completed: mastery 86 over 20 practice questions.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "python_data_structures"
+        ],
+        "foundationFor": null,
+        "order": 3
+      },
+      {
+        "id": "node-matrix-shapes",
+        "conceptId": "matrix_shapes",
+        "title": "Matrix Multiplication & Shapes",
+        "category": "Python",
+        "status": "completed",
+        "progress": 100,
+        "mastery": 83,
+        "estimatedMinutes": 0,
+        "reason": "Completed: mastery 83 over 12 practice questions.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "numpy_arrays"
+        ],
+        "foundationFor": null,
+        "order": 4
+      },
+      {
+        "id": "node-pandas-dataframes",
+        "conceptId": "pandas_dataframes",
+        "title": "Pandas DataFrames",
+        "category": "Python",
+        "status": "completed",
+        "progress": 100,
+        "mastery": 84,
+        "estimatedMinutes": 0,
+        "reason": "Completed: mastery 84 over 18 practice questions.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "numpy_arrays"
+        ],
+        "foundationFor": null,
+        "order": 5
+      },
+      {
+        "id": "node-decision-trees",
+        "conceptId": "decision_trees",
+        "title": "Decision Trees",
+        "category": "Machine Learning",
+        "status": "completed",
+        "progress": 100,
+        "mastery": 78,
+        "estimatedMinutes": 0,
+        "reason": "Completed: mastery 78 over 10 practice questions.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "probability_basics",
+          "pandas_dataframes"
+        ],
+        "foundationFor": null,
+        "order": 6
+      },
+      {
+        "id": "node-linear-regression",
+        "conceptId": "linear_regression",
+        "title": "Linear Regression",
+        "category": "Machine Learning",
+        "status": "completed",
+        "progress": 100,
+        "mastery": 85,
+        "estimatedMinutes": 0,
+        "reason": "Completed: mastery 85 over 15 practice questions.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "matrix_shapes",
+          "std_variance"
+        ],
+        "foundationFor": null,
+        "order": 7
+      },
+      {
+        "id": "node-probability-basics",
+        "conceptId": "probability_basics",
+        "title": "Probability Fundamentals",
+        "category": "Statistics",
+        "status": "current",
+        "progress": 70,
+        "mastery": 70,
+        "estimatedMinutes": 12,
+        "reason": "Moved earlier: foundation for Bias vs Variance Tradeoff, which you're working on (mastery 54).",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [],
+        "foundationFor": "bias_variance",
+        "order": 8
+      },
+      {
+        "id": "node-std-variance",
+        "conceptId": "std_variance",
+        "title": "Standard Deviation & Variance",
+        "category": "Statistics",
+        "status": "adapted",
+        "progress": 66,
+        "mastery": 66,
+        "estimatedMinutes": 14,
+        "reason": "Moved earlier: foundation for Bias vs Variance Tradeoff, which you're working on (mastery 54).",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "probability_basics"
+        ],
+        "foundationFor": "bias_variance",
+        "order": 9
+      },
+      {
+        "id": "node-bias-variance",
+        "conceptId": "bias_variance",
+        "title": "Bias vs Variance Tradeoff",
+        "category": "Machine Learning",
+        "status": "adapted",
+        "progress": 54,
+        "mastery": 54,
+        "estimatedMinutes": 23,
+        "reason": "Revision added: LOW priority weakness (mastery 54%, 8 attempts, 50% recent accuracy, trend improving).",
+        "isRevision": true,
+        "skipped": false,
+        "prerequisites": [
+          "linear_regression",
+          "std_variance"
+        ],
+        "foundationFor": null,
+        "order": 10
+      },
+      {
+        "id": "node-confusion-matrix-roc",
+        "conceptId": "confusion_matrix_roc",
+        "title": "Confusion Matrix & ROC-AUC",
+        "category": "Machine Learning",
+        "status": "locked",
+        "progress": 63,
+        "mastery": 63,
+        "estimatedMinutes": 18,
+        "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Probability Fundamentals.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "probability_basics",
+          "decision_trees"
+        ],
+        "foundationFor": null,
+        "order": 11
+      },
+      {
+        "id": "node-gradient-descent",
+        "conceptId": "gradient_descent",
+        "title": "Gradient Descent Optimization",
+        "category": "Machine Learning",
+        "status": "recommended",
+        "progress": 61,
+        "mastery": 61,
+        "estimatedMinutes": 20,
+        "reason": "Core concept for your goal: become an ML Engineer.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "linear_regression"
+        ],
+        "foundationFor": null,
+        "order": 12
+      },
+      {
+        "id": "node-overfitting",
+        "conceptId": "overfitting",
+        "title": "Overfitting & Underfitting",
+        "category": "Machine Learning",
+        "status": "locked",
+        "progress": 72,
+        "mastery": 72,
+        "estimatedMinutes": 14,
+        "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Bias vs Variance Tradeoff.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "bias_variance"
+        ],
+        "foundationFor": null,
+        "order": 13
+      },
+      {
+        "id": "node-cross-validation",
+        "conceptId": "cross_validation",
+        "title": "Cross-Validation",
+        "category": "Machine Learning",
+        "status": "locked",
+        "progress": 72,
+        "mastery": 72,
+        "estimatedMinutes": 14,
+        "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Overfitting & Underfitting.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "overfitting"
+        ],
+        "foundationFor": null,
+        "order": 14
+      },
+      {
+        "id": "node-regularization",
+        "conceptId": "regularization",
+        "title": "Regularization (L1/L2)",
+        "category": "Machine Learning",
+        "status": "locked",
+        "progress": 66,
+        "mastery": 66,
+        "estimatedMinutes": 17,
+        "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Overfitting & Underfitting, Gradient Descent Optimization.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "overfitting",
+          "gradient_descent"
+        ],
+        "foundationFor": null,
+        "order": 15
+      },
+      {
+        "id": "node-neural-networks",
+        "conceptId": "neural_networks",
+        "title": "Neural Network Fundamentals",
+        "category": "Deep Learning",
+        "status": "locked",
+        "progress": 0,
+        "mastery": 50,
+        "estimatedMinutes": 30,
+        "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Gradient Descent Optimization.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "gradient_descent",
+          "matrix_shapes"
+        ],
+        "foundationFor": null,
+        "order": 16
+      },
+      {
+        "id": "node-backpropagation",
+        "conceptId": "backpropagation",
+        "title": "Backpropagation",
+        "category": "Deep Learning",
+        "status": "locked",
+        "progress": 0,
+        "mastery": 30,
+        "estimatedMinutes": 42,
+        "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Neural Network Fundamentals.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "neural_networks"
+        ],
+        "foundationFor": null,
+        "order": 17
+      },
+      {
+        "id": "node-cnns",
+        "conceptId": "cnns",
+        "title": "Convolutional Neural Networks",
+        "category": "Deep Learning",
+        "status": "locked",
+        "progress": 0,
+        "mastery": 25,
+        "estimatedMinutes": 45,
+        "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Backpropagation.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "backpropagation"
+        ],
+        "foundationFor": null,
+        "order": 18
+      }
+    ],
+    "milestones": [
+      {
+        "id": "stage-python",
+        "title": "Python",
+        "category": "Python",
+        "status": "completed",
+        "nodeIds": [
+          "node-python-basics",
+          "node-python-data-structures",
+          "node-numpy-arrays",
+          "node-matrix-shapes",
+          "node-pandas-dataframes"
+        ],
+        "progress": 100
+      },
+      {
+        "id": "stage-machine-learning",
+        "title": "Machine Learning",
+        "category": "Machine Learning",
+        "status": "upcoming",
+        "nodeIds": [
+          "node-decision-trees",
+          "node-linear-regression",
+          "node-bias-variance",
+          "node-confusion-matrix-roc",
+          "node-gradient-descent",
+          "node-overfitting",
+          "node-cross-validation",
+          "node-regularization"
+        ],
+        "progress": 74
+      },
+      {
+        "id": "stage-statistics",
+        "title": "Statistics",
+        "category": "Statistics",
+        "status": "current",
+        "nodeIds": [
+          "node-probability-basics",
+          "node-std-variance"
+        ],
+        "progress": 68
+      },
+      {
+        "id": "stage-deep-learning",
+        "title": "Deep Learning",
+        "category": "Deep Learning",
+        "status": "upcoming",
+        "nodeIds": [
+          "node-neural-networks",
+          "node-backpropagation",
+          "node-cnns"
+        ],
+        "progress": 0
+      }
+    ],
+    "currentNode": {
+      "id": "node-probability-basics",
+      "conceptId": "probability_basics",
+      "title": "Probability Fundamentals",
+      "category": "Statistics",
+      "status": "current",
+      "progress": 70,
+      "mastery": 70,
+      "estimatedMinutes": 12,
+      "reason": "Moved earlier: foundation for Bias vs Variance Tradeoff, which you're working on (mastery 54).",
+      "isRevision": false,
+      "skipped": false,
+      "prerequisites": [],
+      "foundationFor": "bias_variance",
+      "order": 8
+    },
+    "nextNodes": [
+      {
+        "id": "node-std-variance",
+        "conceptId": "std_variance",
+        "title": "Standard Deviation & Variance",
+        "category": "Statistics",
+        "status": "adapted",
+        "progress": 66,
+        "mastery": 66,
+        "estimatedMinutes": 14,
+        "reason": "Moved earlier: foundation for Bias vs Variance Tradeoff, which you're working on (mastery 54).",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [
+          "probability_basics"
+        ],
+        "foundationFor": "bias_variance",
+        "order": 9
+      },
+      {
+        "id": "node-bias-variance",
+        "conceptId": "bias_variance",
+        "title": "Bias vs Variance Tradeoff",
+        "category": "Machine Learning",
+        "status": "adapted",
+        "progress": 54,
+        "mastery": 54,
+        "estimatedMinutes": 23,
+        "reason": "Revision added: LOW priority weakness (mastery 54%, 8 attempts, 50% recent accuracy, trend improving).",
+        "isRevision": true,
+        "skipped": false,
+        "prerequisites": [
+          "linear_regression",
+          "std_variance"
+        ],
+        "foundationFor": null,
+        "order": 10
+      }
+    ],
+    "changes": [],
+    "changedNow": true,
+    "beforeAfter": "Initial path created: start with Probability Fundamentals.",
+    "whyThisPath": "You’re aiming to become an ML Engineer, and mastering Bias vs Variance Tradeoff (mastery 54) is key. Probability Fundamentals and Standard Deviation & Variance are prerequisites, so starting with them will clear the gaps you’re facing. By following this order—Probability Fundamentals, then Standard Deviation & Variance, and finally Bias vs Variance Tradeoff—you’ll build a solid foundation. With a balanced pace of 45 minutes a day, you can finish in about 1 week and move confidently toward your goal.",
+    "whySource": "llm",
+    "estimatedWeeksRemaining": 1,
+    "totalEstimatedMinutes": 249,
+    "dailyPlan": [
+      {
+        "id": "plan-revision-bias-variance",
+        "title": "Revise Bias vs Variance Tradeoff",
+        "type": "revision",
+        "durationMinutes": 15,
+        "completed": false,
+        "conceptId": "bias_variance"
+      },
+      {
+        "id": "plan-practice-probability-basics",
+        "title": "Practice Probability Fundamentals (Medium questions)",
+        "type": "practice",
+        "durationMinutes": 15,
+        "completed": false,
+        "conceptId": "probability_basics",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "plan-lesson-probability-basics",
+        "title": "Lesson: Probability Fundamentals",
+        "type": "lesson",
+        "durationMinutes": 12,
+        "completed": false,
+        "conceptId": "probability_basics"
+      }
+    ],
+    "pathHash": "779cce4a5321cf4f",
+    "preview": false
+  },
+  "error": null,
+  "fallback_data": null
+}

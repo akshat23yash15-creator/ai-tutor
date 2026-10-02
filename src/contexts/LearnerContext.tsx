@@ -1,7 +1,21 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { LearnerProfile, DEMO_PROFILES } from "@/data/mockLearner";
 import { PathNode, INTERMEDIATE_LEARNING_PATH, BEGINNER_LEARNING_PATH, ADVANCED_LEARNING_PATH } from "@/data/mockLearningPath";
 import { toast } from "sonner";
+import {
+  getProfile,
+  getLearningPath,
+  resetLearner,
+  submitAssessment,
+  evaluateQuiz,
+  checkHealth
+} from "@/services/api";
+import {
+  mapBackendProfileToLearner,
+  mapBackendPathToPathNodes,
+  mapBackendAdaptiveDecisionToEvent
+} from "@/services/adapters";
+import { BackendAdaptiveDecision } from "@/services/backendTypes";
 
 export interface AdaptiveEvent {
   id: string;
@@ -21,23 +35,50 @@ export interface AssessmentData {
   goal: string;
   pace: "Relaxed" | "Balanced" | "Intensive";
   dailyMinutes: number;
+  name?: string;
 }
 
-interface LearnerContextType {
+export interface LearnerContextType {
   profile: LearnerProfile;
   activeProfileId: string;
+  backendLearnerId: string;
   learningPath: PathNode[];
   adaptiveEvents: AdaptiveEvent[];
   completedLessons: string[];
+  isOnline: boolean;
+  isLoading: boolean;
+  isWakingUp: boolean;
   switchDemoProfile: (id: "beginner" | "intermediate" | "advanced") => void;
   markLessonComplete: (lessonId: string) => void;
-  recordQuizScore: (topic: string, scorePercent: number, totalQuestions: number, category?: string) => AdaptiveEvent;
-  applyAssessment: (data: AssessmentData) => void;
+  recordQuizScore: (
+    topic: string,
+    scorePercent: number,
+    totalQuestions: number,
+    category?: string,
+    rawAnswers?: Array<{
+      question_id: string;
+      concept_tested?: string;
+      difficulty?: string;
+      selected_option_index: number;
+      correct_index?: number;
+      is_correct?: boolean;
+      time_taken_seconds?: number;
+    }>
+  ) => Promise<AdaptiveEvent> | AdaptiveEvent;
+  applyAssessment: (data: AssessmentData) => Promise<void> | void;
   toggleDailyPlanItem: (planId: string) => void;
-  resetToDefault: () => void;
+  resetToDefault: () => Promise<void> | void;
+  refreshProfile: () => Promise<void>;
 }
 
-const STORAGE_KEY = "learnai_state_v2";
+const STORAGE_KEY = "learnai_state_v3";
+
+export function toBackendLearnerId(id: string): string {
+  if (id === "beginner" || id === "alex-beginner") return "alex-beginner";
+  if (id === "advanced" || id === "elena-advanced") return "elena-advanced";
+  if (id === "intermediate" || id === "akshat-intermediate") return "akshat-intermediate";
+  return id;
+}
 
 const LearnerContext = createContext<LearnerContextType | undefined>(undefined);
 
@@ -45,7 +86,12 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [activeProfileId, setActiveProfileId] = useState<string>("intermediate");
   const [profile, setProfile] = useState<LearnerProfile>(DEMO_PROFILES.intermediate);
   const [learningPath, setLearningPath] = useState<PathNode[]>(INTERMEDIATE_LEARNING_PATH);
-  const [completedLessons, setCompletedLessons] = useState<string[]>(["python-basics", "numpy-pandas", "statistics-intro", "ml-fundamentals"]);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([
+    "python-basics",
+    "numpy-pandas",
+    "statistics-intro",
+    "ml-fundamentals"
+  ]);
   const [adaptiveEvents, setAdaptiveEvents] = useState<AdaptiveEvent[]>([
     {
       id: "init-adapt-1",
@@ -59,23 +105,123 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   ]);
 
-  // Load from localStorage on mount
+  const [isOnline, setIsOnline] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isWakingUp, setIsWakingUp] = useState<boolean>(false);
+
+  // Guard to ensure fallback toast is shown only once per session
+  const fallbackToastShown = useRef<boolean>(false);
+
+  const notifyFallback = useCallback(() => {
+    if (!fallbackToastShown.current) {
+      fallbackToastShown.current = true;
+      toast.info("AI service momentarily unreachable. Running in local tutor mode.", {
+        description: "Your learning session will continue without interruption."
+      });
+    }
+    setIsOnline(false);
+  }, []);
+
+  const backendLearnerId = toBackendLearnerId(activeProfileId);
+
+  // Load backend profile & learning path for a given learner ID
+  const fetchLearnerFromBackend = useCallback(async (bId: string, showToast = false) => {
+    setIsLoading(true);
+    try {
+      const [profileRes, pathRes] = await Promise.all([
+        getProfile(bId),
+        getLearningPath(bId)
+      ]);
+
+      if (profileRes.success && profileRes.data?.profile) {
+        setIsOnline(true);
+        const mappedProfile = mapBackendProfileToLearner(
+          profileRes.data.profile,
+          pathRes.success ? pathRes.data : null
+        );
+
+        setProfile(mappedProfile);
+
+        if (pathRes.success && pathRes.data?.nodes && pathRes.data.nodes.length > 0) {
+          const mappedNodes = mapBackendPathToPathNodes(pathRes.data.nodes);
+          setLearningPath(mappedNodes);
+
+          // Synchronize completed lessons from nodes
+          const completedFromPath = mappedNodes
+            .filter((n) => n.status === "completed")
+            .map((n) => n.lessonId);
+          if (completedFromPath.length > 0) {
+            setCompletedLessons((prev) => Array.from(new Set([...prev, ...completedFromPath])));
+          }
+        }
+
+        // Sync adaptive events if present in backend profile
+        if (profileRes.data.profile.recentAdaptiveEvents?.length > 0) {
+          const mappedEvents = profileRes.data.profile.recentAdaptiveEvents.map(mapBackendAdaptiveDecisionToEvent);
+          setAdaptiveEvents(mappedEvents);
+        }
+
+        if (showToast) {
+          toast.success(`Switched to Demo Learner: ${mappedProfile.name} (${mappedProfile.level})`, {
+            description: `Live AI path adapted for: ${mappedProfile.goal}`
+          });
+        }
+      } else {
+        notifyFallback();
+      }
+    } catch (err) {
+      console.warn("Backend fetch failed, falling back to mock:", err);
+      notifyFallback();
+    } finally {
+      setIsLoading(false);
+      setIsWakingUp(false);
+    }
+  }, [notifyFallback]);
+
+  // Load from localStorage on mount & probe backend
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.activeProfileId && DEMO_PROFILES[parsed.activeProfileId]) {
+        if (parsed.activeProfileId) {
           setActiveProfileId(parsed.activeProfileId);
-          setProfile(parsed.profile || DEMO_PROFILES[parsed.activeProfileId]);
-          setLearningPath(parsed.learningPath || INTERMEDIATE_LEARNING_PATH);
-          setCompletedLessons(parsed.completedLessons || []);
+          if (parsed.profile) setProfile(parsed.profile);
+          if (parsed.learningPath) setLearningPath(parsed.learningPath);
+          if (parsed.completedLessons) setCompletedLessons(parsed.completedLessons);
           if (parsed.adaptiveEvents) setAdaptiveEvents(parsed.adaptiveEvents);
         }
       }
     } catch (e) {
-      console.error("Failed to load learner state:", e);
+      console.error("Failed to load local learner state:", e);
     }
+
+    // Health check on background startup
+    const checkAndSync = async () => {
+      const healthTimer = setTimeout(() => {
+        setIsWakingUp(true);
+      }, 2500);
+
+      try {
+        const health = await checkHealth();
+        clearTimeout(healthTimer);
+        if (health.success) {
+          setIsOnline(true);
+          setIsWakingUp(false);
+          // Initial background sync with backend
+          const initialId = toBackendLearnerId(activeProfileId || "intermediate");
+          fetchLearnerFromBackend(initialId, false);
+        } else {
+          setIsWakingUp(false);
+        }
+      } catch {
+        clearTimeout(healthTimer);
+        setIsWakingUp(false);
+      }
+    };
+
+    checkAndSync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Save to localStorage whenever state changes
@@ -99,26 +245,28 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Switch demo profiles
   const switchDemoProfile = (id: "beginner" | "intermediate" | "advanced") => {
     setActiveProfileId(id);
-    const selectedProfile = DEMO_PROFILES[id] || DEMO_PROFILES.intermediate;
-    setProfile(selectedProfile);
 
-    let newPath = INTERMEDIATE_LEARNING_PATH;
+    // Instant optimistic update with mock data
+    const localFallback = DEMO_PROFILES[id] || DEMO_PROFILES.intermediate;
+    setProfile(localFallback);
+
+    let initialPath = INTERMEDIATE_LEARNING_PATH;
     let initialCompleted = ["python-basics", "numpy-pandas"];
 
     if (id === "beginner") {
-      newPath = BEGINNER_LEARNING_PATH;
+      initialPath = BEGINNER_LEARNING_PATH;
       initialCompleted = [];
     } else if (id === "advanced") {
-      newPath = ADVANCED_LEARNING_PATH;
+      initialPath = ADVANCED_LEARNING_PATH;
       initialCompleted = ["node-a1"];
     }
 
-    setLearningPath(newPath);
+    setLearningPath(initialPath);
     setCompletedLessons(initialCompleted);
 
-    toast.success(`Switched to Demo Learner: ${selectedProfile.name} (${selectedProfile.level})`, {
-      description: `Path adapted for: ${selectedProfile.goal}`
-    });
+    // Call backend to get real learner state
+    const bId = toBackendLearnerId(id);
+    fetchLearnerFromBackend(bId, true);
   };
 
   // Mark lesson as complete
@@ -130,7 +278,7 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       // Update node in learning path
       setLearningPath((prev) =>
         prev.map((node) => {
-          if (node.lessonId === lessonId) {
+          if (node.lessonId === lessonId || node.id === lessonId) {
             return { ...node, status: "completed", completionPercent: 100 };
           }
           return node;
@@ -151,7 +299,82 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   // Adaptive engine logic when a quiz is submitted
-  const recordQuizScore = (topic: string, scorePercent: number, totalQuestions: number, category = "Machine Learning") => {
+  const recordQuizScore = async (
+    topic: string,
+    scorePercent: number,
+    totalQuestions: number,
+    category = "Machine Learning",
+    rawAnswers?: Array<{
+      question_id: string;
+      concept_tested?: string;
+      difficulty?: string;
+      selected_option_index: number;
+      correct_index?: number;
+      is_correct?: boolean;
+      time_taken_seconds?: number;
+    }>
+  ): Promise<AdaptiveEvent> => {
+    // If online, call backend evaluate
+    if (isOnline) {
+      try {
+        const answersPayload = rawAnswers && rawAnswers.length > 0
+          ? rawAnswers
+          : [
+              {
+                question_id: `q-${topic.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+                concept_tested: topic,
+                difficulty: scorePercent < 60 ? "Easy" : scorePercent >= 85 ? "Hard" : "Medium",
+                selected_option_index: scorePercent >= 50 ? 1 : 0,
+                correct_index: 1,
+                is_correct: scorePercent >= 70,
+                time_taken_seconds: 35
+              }
+            ];
+
+        const evalRes = await evaluateQuiz(backendLearnerId, {
+          topic,
+          category,
+          answers: answersPayload
+        });
+
+        if (evalRes.success && evalRes.data?.adaptive_decision) {
+          const decision: BackendAdaptiveDecision = evalRes.data.adaptive_decision;
+          const mappedEvent = mapBackendAdaptiveDecisionToEvent(decision);
+
+          // Prepend event
+          setAdaptiveEvents((prev) => [mappedEvent, ...prev]);
+
+          // Update recent adaptive decision in profile
+          setProfile((prev) => ({
+            ...prev,
+            questionsSolved: prev.questionsSolved + totalQuestions,
+            accuracyRate: Math.round(
+              (prev.accuracyRate * prev.questionsSolved + scorePercent * totalQuestions) /
+                (prev.questionsSolved + totalQuestions)
+            ),
+            recentAdaptiveDecision: {
+              timestamp: decision.timestamp || "Just now",
+              trigger: decision.reason,
+              score: decision.score,
+              action: decision.action,
+              description: decision.recommendation,
+              beforePath: "Standard Linear Sequence",
+              afterPath: decision.pathAdjustment,
+              adjustedTopic: decision.topic || topic
+            }
+          }));
+
+          // Trigger asynchronous refresh of profile and path from backend
+          fetchLearnerFromBackend(backendLearnerId, false);
+
+          return mappedEvent;
+        }
+      } catch (err) {
+        console.warn("Backend quiz evaluation failed, using local adaptive engine:", err);
+      }
+    }
+
+    // Local deterministic adaptive fallback logic
     let action: "reduced" | "maintained" | "increased" = "maintained";
     let reason = "";
     let recommendation = "";
@@ -163,7 +386,6 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       recommendation = `We reduced question difficulty to reinforce foundational concepts and added a 15-minute revision module on "${topic}".`;
       pathAdjustment = `Adjusted roadmap: Added prerequisite refresher before advanced evaluations.`;
 
-      // Update path node status to 'adapted'
       setLearningPath((prev) =>
         prev.map((node) => {
           if (node.title.toLowerCase().includes(topic.toLowerCase()) || node.lessonId.includes("bias")) {
@@ -182,7 +404,6 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       recommendation = `Basic drills skipped. We increased question complexity and unlocked next-level challenges.`;
       pathAdjustment = `Roadmap accelerated: Advanced modules unlocked early.`;
 
-      // Advance nodes
       setLearningPath((prev) =>
         prev.map((node, idx) => {
           if (node.status === "recommended" && idx <= 6) {
@@ -198,7 +419,7 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       pathAdjustment = `Roadmap maintained at balanced pace.`;
     }
 
-    const newEvent: AdaptiveEvent = {
+    const fallbackEvent: AdaptiveEvent = {
       id: `adapt-${Date.now()}`,
       timestamp: "Just now",
       topic,
@@ -209,20 +430,16 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       pathAdjustment
     };
 
-    setAdaptiveEvents((prev) => [newEvent, ...prev]);
+    setAdaptiveEvents((prev) => [fallbackEvent, ...prev]);
 
-    // Update profile metrics
     setProfile((prev) => {
       const currentCategoryScore = prev.skills[category] || 60;
       const updatedCategoryScore = Math.max(10, Math.min(100, Math.round(currentCategoryScore * 0.7 + scorePercent * 0.3)));
-      
-      const newSkills = {
-        ...prev.skills,
-        [category]: updatedCategoryScore
-      };
-
-      // Recalculate accuracy rate
-      const newAccuracy = Math.round((prev.accuracyRate * prev.questionsSolved + scorePercent * totalQuestions) / (prev.questionsSolved + totalQuestions));
+      const newSkills = { ...prev.skills, [category]: updatedCategoryScore };
+      const newAccuracy = Math.round(
+        (prev.accuracyRate * prev.questionsSolved + scorePercent * totalQuestions) /
+          (prev.questionsSolved + totalQuestions)
+      );
 
       return {
         ...prev,
@@ -242,13 +459,54 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       };
     });
 
-    return newEvent;
+    return fallbackEvent;
   };
 
   // Process assessment questionnaire
-  const applyAssessment = (data: AssessmentData) => {
+  const applyAssessment = async (data: AssessmentData) => {
+    setIsLoading(true);
+
+    // Call backend assessment API if online
+    if (isOnline) {
+      try {
+        const customId = `learner-${Date.now()}`;
+        const res = await submitAssessment(customId, {
+          name: data.name || "Learner",
+          experience_level: data.experience,
+          languages: data.languages,
+          topics_known: data.aiTopics,
+          goal: data.goal,
+          pace: data.pace,
+          daily_minutes: data.dailyMinutes,
+          overwrite: true
+        });
+
+        if (res.success && res.data?.profile) {
+          const mappedProfile = mapBackendProfileToLearner(
+            res.data.profile,
+            res.data.path
+          );
+          setProfile(mappedProfile);
+          setActiveProfileId(customId);
+
+          if (res.data.path?.nodes) {
+            setLearningPath(mapBackendPathToPathNodes(res.data.path.nodes));
+          }
+
+          toast.success("Personalized AI Learning Profile Generated!", {
+            description: "Your personalized roadmap is ready from live AI engine."
+          });
+          setIsLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("Backend assessment call failed, using local adapter:", err);
+      }
+    }
+
+    // Local fallback assessment synthesis
     let level: "Beginner" | "Intermediate" | "Advanced" = "Intermediate";
-    if (data.experience === "Beginner" || data.knownTopics?.length <= 1) {
+    if (data.experience === "Beginner" || data.aiTopics?.length <= 1) {
       level = "Beginner";
     } else if (data.experience === "Advanced" || data.aiTopics?.length >= 6) {
       level = "Advanced";
@@ -277,7 +535,7 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const customProfile: LearnerProfile = {
       ...DEMO_PROFILES.intermediate,
-      name: "Akshat",
+      name: data.name || "Akshat",
       level,
       goal: data.goal,
       experience: data.experience,
@@ -291,6 +549,7 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     setProfile(customProfile);
+    setIsLoading(false);
     toast.success("Personalized AI Learning Profile Generated!", {
       description: "Your personalized roadmap is ready."
     });
@@ -305,13 +564,33 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }));
   };
 
-  const resetToDefault = () => {
+  const resetToDefault = async () => {
+    setIsLoading(true);
+    if (isOnline) {
+      try {
+        const res = await resetLearner(backendLearnerId);
+        if (res.success) {
+          await fetchLearnerFromBackend(backendLearnerId, false);
+          toast.info(`Reset demo learner (${profile.name}) to original seeded state.`);
+          setIsLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("Backend reset failed:", err);
+      }
+    }
+
     localStorage.removeItem(STORAGE_KEY);
     setActiveProfileId("intermediate");
     setProfile(DEMO_PROFILES.intermediate);
     setLearningPath(INTERMEDIATE_LEARNING_PATH);
     setCompletedLessons(["python-basics", "numpy-pandas", "statistics-intro", "ml-fundamentals"]);
     toast.info("Reset to default demonstration profile.");
+    setIsLoading(false);
+  };
+
+  const refreshProfile = async () => {
+    await fetchLearnerFromBackend(backendLearnerId, false);
   };
 
   return (
@@ -319,15 +598,20 @@ export const LearnerProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         profile,
         activeProfileId,
+        backendLearnerId,
         learningPath,
         adaptiveEvents,
         completedLessons,
+        isOnline,
+        isLoading,
+        isWakingUp,
         switchDemoProfile,
         markLessonComplete,
         recordQuizScore,
         applyAssessment,
         toggleDailyPlanItem,
-        resetToDefault
+        resetToDefault,
+        refreshProfile
       }}
     >
       {children}

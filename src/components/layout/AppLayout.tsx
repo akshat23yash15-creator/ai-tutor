@@ -5,6 +5,7 @@ import { Menu, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CanvasBackground } from "./CanvasBackground";
 import { DemoProfileSwitcher } from "@/components/common/DemoProfileSwitcher";
+import { useLearner } from "@/contexts/LearnerContext";
 
 export const SidebarContext = createContext<{
   isCollapsed: boolean;
@@ -21,6 +22,7 @@ export const SidebarContext = createContext<{
 export const useSidebar = () => useContext(SidebarContext);
 
 export const AppLayout = () => {
+  const { isWakingUp } = useLearner();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -92,6 +94,12 @@ export const AppLayout = () => {
             isCollapsed ? "lg:ml-[72px] w-full lg:w-[calc(100vw-72px)]" : "lg:ml-[260px] w-full lg:w-[calc(100vw-260px)]"
           )}
         >
+          {isWakingUp && (
+            <div className="bg-primary/15 border-b border-primary/30 text-primary text-xs py-1.5 px-4 text-center font-mono flex items-center justify-center gap-2 animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
+              <span>Waking up AI tutor...</span>
+            </div>
+          )}
           <div className="flex-1 w-full max-w-full animate-fade-in relative">
             <Outlet />
           </div>

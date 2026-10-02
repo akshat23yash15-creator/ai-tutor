@@ -1,0 +1,341 @@
+{
+  "success": true,
+  "action": "evaluate",
+  "data": {
+    "results": [
+      {
+        "question_id": "seed-q-bias-variance",
+        "is_correct": false,
+        "correct_index": 2,
+        "concept": "bias_variance"
+      }
+    ],
+    "score": 0,
+    "mastery_updates": [
+      {
+        "concept": "bias_variance",
+        "concept_name": "Bias vs Variance Tradeoff",
+        "previous_score": 54,
+        "new_score": 49.1,
+        "category": "Machine Learning",
+        "previous_category_score": 71,
+        "new_category_score": 70.1,
+        "trend": "declining",
+        "confidence": 0.77
+      }
+    ],
+    "weakness_report": {
+      "strong": [
+        {
+          "concept": "python_basics",
+          "name": "Python Basics (Variables, Loops, Functions)",
+          "category": "Python",
+          "mastery": 92,
+          "attempts": 30,
+          "classification": "Strong",
+          "priority": 20.1,
+          "label": "LOW",
+          "reason": "Mastery 92%, 30 attempts, 90% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "python_basics",
+            "name": "Python Basics (Variables, Loops, Functions)",
+            "mastery": 92,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "python_data_structures",
+          "name": "Python Data Structures",
+          "category": "Python",
+          "mastery": 90,
+          "attempts": 25,
+          "classification": "Strong",
+          "priority": 21,
+          "label": "LOW",
+          "reason": "Mastery 90%, 25 attempts, 90% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "python_data_structures",
+            "name": "Python Data Structures",
+            "mastery": 90,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "numpy_arrays",
+          "name": "NumPy Arrays & Vectorization",
+          "category": "Python",
+          "mastery": 86,
+          "attempts": 20,
+          "classification": "Strong",
+          "priority": 22.8,
+          "label": "LOW",
+          "reason": "Mastery 86%, 20 attempts, 90% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "numpy_arrays",
+            "name": "NumPy Arrays & Vectorization",
+            "mastery": 86,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "linear_regression",
+          "name": "Linear Regression",
+          "category": "Machine Learning",
+          "mastery": 85,
+          "attempts": 15,
+          "classification": "Strong",
+          "priority": 19.8,
+          "label": "LOW",
+          "reason": "Mastery 85%, 15 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "linear_regression",
+            "name": "Linear Regression",
+            "mastery": 85,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "pandas_dataframes",
+          "name": "Pandas DataFrames",
+          "category": "Python",
+          "mastery": 84,
+          "attempts": 18,
+          "classification": "Strong",
+          "priority": 20.2,
+          "label": "LOW",
+          "reason": "Mastery 84%, 18 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "pandas_dataframes",
+            "name": "Pandas DataFrames",
+            "mastery": 84,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "matrix_shapes",
+          "name": "Matrix Multiplication & Shapes",
+          "category": "Python",
+          "mastery": 83.2,
+          "attempts": 12,
+          "classification": "Strong",
+          "priority": 20.6,
+          "label": "LOW",
+          "reason": "Mastery 83%, 12 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "matrix_shapes",
+            "name": "Matrix Multiplication & Shapes",
+            "mastery": 83.2,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "decision_trees",
+          "name": "Decision Trees",
+          "category": "Machine Learning",
+          "mastery": 78,
+          "attempts": 10,
+          "classification": "Strong",
+          "priority": 22.9,
+          "label": "LOW",
+          "reason": "Mastery 78%, 10 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "decision_trees",
+            "name": "Decision Trees",
+            "mastery": 78,
+            "is_prerequisite": false
+          }
+        }
+      ],
+      "average": [
+        {
+          "concept": "gradient_descent",
+          "name": "Gradient Descent Optimization",
+          "category": "Machine Learning",
+          "mastery": 61,
+          "attempts": 8,
+          "classification": "Average",
+          "priority": 36.2,
+          "label": "LOW",
+          "reason": "Mastery 61%, 8 attempts, 62% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "gradient_descent",
+            "name": "Gradient Descent Optimization",
+            "mastery": 61,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "confusion_matrix_roc",
+          "name": "Confusion Matrix & ROC-AUC",
+          "category": "Machine Learning",
+          "mastery": 63,
+          "attempts": 6,
+          "classification": "Average",
+          "priority": 32.7,
+          "label": "LOW",
+          "reason": "Mastery 63%, 6 attempts, 67% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "confusion_matrix_roc",
+            "name": "Confusion Matrix & ROC-AUC",
+            "mastery": 63,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "regularization",
+          "name": "Regularization (L1/L2)",
+          "category": "Machine Learning",
+          "mastery": 66,
+          "attempts": 6,
+          "classification": "Average",
+          "priority": 31.3,
+          "label": "LOW",
+          "reason": "Mastery 66%, 6 attempts, 67% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 49.1,
+            "is_prerequisite": true
+          }
+        },
+        {
+          "concept": "overfitting",
+          "name": "Overfitting & Underfitting",
+          "category": "Machine Learning",
+          "mastery": 72,
+          "attempts": 8,
+          "classification": "Average",
+          "priority": 24.4,
+          "label": "LOW",
+          "reason": "Mastery 72%, 8 attempts, 75% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 49.1,
+            "is_prerequisite": true
+          }
+        },
+        {
+          "concept": "std_variance",
+          "name": "Standard Deviation & Variance",
+          "category": "Statistics",
+          "mastery": 66,
+          "attempts": 4,
+          "classification": "Average",
+          "priority": 23.1,
+          "label": "LOW",
+          "reason": "Mastery 66%, 4 attempts, 75% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "std_variance",
+            "name": "Standard Deviation & Variance",
+            "mastery": 66,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "probability_basics",
+          "name": "Probability Fundamentals",
+          "category": "Statistics",
+          "mastery": 70,
+          "attempts": 4,
+          "classification": "Average",
+          "priority": 21.2,
+          "label": "LOW",
+          "reason": "Mastery 70%, 4 attempts, 75% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "probability_basics",
+            "name": "Probability Fundamentals",
+            "mastery": 70,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "cross_validation",
+          "name": "Cross-Validation",
+          "category": "Machine Learning",
+          "mastery": 72.2,
+          "attempts": 5,
+          "classification": "Average",
+          "priority": 20.5,
+          "label": "LOW",
+          "reason": "Mastery 72%, 5 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 49.1,
+            "is_prerequisite": true
+          }
+        }
+      ],
+      "weak": [
+        {
+          "concept": "bias_variance",
+          "name": "Bias vs Variance Tradeoff",
+          "category": "Machine Learning",
+          "mastery": 49.1,
+          "attempts": 9,
+          "classification": "Weak",
+          "priority": 56.9,
+          "label": "HIGH",
+          "reason": "Mastery 49%, 9 attempts, 44% recent accuracy, 1 consecutive mistake, trend declining",
+          "tutor_alert": "Your tutor noticed you're struggling with Bias vs Variance Tradeoff.",
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 49.1,
+            "is_prerequisite": false
+          }
+        }
+      ],
+      "untried": [
+        "distributions",
+        "hypothesis_testing",
+        "neural_networks",
+        "backpropagation",
+        "cnns",
+        "tokenization",
+        "word_embeddings",
+        "transformers_attention",
+        "prompt_engineering",
+        "rag_chunking",
+        "llm_finetuning"
+      ]
+    },
+    "next_difficulty": {
+      "concept": "bias_variance",
+      "difficulty": "Easy",
+      "reason": "Bias vs Variance Tradeoff: 2 of the last 3 answers were wrong; stepping down from Medium to Easy.",
+      "rule_id": "R3_MOSTLY_WRONG"
+    },
+    "adaptive_decision": {
+      "id": "adapt-5",
+      "timestamp": "Today at 9:42 AM",
+      "createdAt": "2026-10-02T09:42:47.588303+00:00",
+      "topic": "Bias vs Variance Tradeoff",
+      "score": 0,
+      "action": "reduced",
+      "reason": "You scored 0% on Bias vs Variance Tradeoff, below the 60% threshold. Bias vs Variance Tradeoff is now rated Weak (HIGH priority: mastery 49%, 9 attempts, 44% recent accuracy, 1 consecutive mistake, trend declining).",
+      "recommendation": "Next Bias vs Variance Tradeoff questions drop to Easy difficulty. Review the core intuition behind Bias vs Variance Tradeoff with the tutor before retrying.",
+      "pathAdjustment": "Roadmap unchanged: current focus remains Probability Fundamentals.",
+      "concept": "bias_variance",
+      "overridden": false,
+      "thresholdAction": "reduced"
+    }
+  },
+  "error": null,
+  "fallback_data": null
+}

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useLearner } from "@/contexts/LearnerContext";
 import { MOCK_LESSONS, Lesson } from "@/data/mockLessons";
 import { getTutorReply } from "@/data/mockTutorResponses";
+import { tutorChat } from "@/services/api";
 import {
   BookOpen,
   CheckCircle2,
@@ -32,7 +33,8 @@ import "katex/dist/katex.min.css";
 export const Learn: React.FC = () => {
   const { lessonId = "bias-variance" } = useParams<{ lessonId?: string }>();
   const navigate = useNavigate();
-  const { completedLessons, markLessonComplete, learningPath } = useLearner();
+  const { completedLessons, markLessonComplete, learningPath, backendLearnerId, isOnline } = useLearner();
+  const conversationIdRef = useRef<string | undefined>(undefined);
 
   // Current lesson or fallback
   const lesson: Lesson = MOCK_LESSONS[lessonId] || MOCK_LESSONS["bias-variance"];
@@ -54,7 +56,7 @@ export const Learn: React.FC = () => {
 
   const isCompleted = completedLessons.includes(lesson.id);
 
-  const handleSendMessage = (textToSend?: string) => {
+  const handleSendMessage = async (textToSend?: string) => {
     const query = textToSend || inputMessage;
     if (!query.trim()) return;
 
@@ -62,11 +64,34 @@ export const Learn: React.FC = () => {
     setTutorMessages((prev) => [...prev, userEntry]);
     if (!textToSend) setInputMessage("");
 
+    if (isOnline) {
+      try {
+        const res = await tutorChat(backendLearnerId, {
+          message: query,
+          conversation_id: conversationIdRef.current,
+          current_topic: lesson.title,
+          question_id: lesson.id
+        });
+        if (res.success && res.data) {
+          if (res.data.conversationId) conversationIdRef.current = res.data.conversationId;
+          const tutorEntry = { role: "tutor" as const, text: res.data.message, time: "Just now" };
+          setTutorMessages((prev) => [...prev, tutorEntry]);
+          return;
+        } else if (res.fallback_data?.message) {
+          const tutorEntry = { role: "tutor" as const, text: res.fallback_data.message, time: "Just now" };
+          setTutorMessages((prev) => [...prev, tutorEntry]);
+          return;
+        }
+      } catch (err) {
+        console.warn("In-lesson tutor call failed, using mock fallback:", err);
+      }
+    }
+
     setTimeout(() => {
       const response = getTutorReply(query);
       const tutorEntry = { role: "tutor" as const, text: response.reply, time: "Just now" };
       setTutorMessages((prev) => [...prev, tutorEntry]);
-    }, 400);
+    }, 350);
   };
 
   const handleQuizSubmit = () => {

@@ -94,23 +94,27 @@ export const Assessment: React.FC = () => {
     );
   };
 
-  const handleFinishAssessment = () => {
+  const handleFinishAssessment = async () => {
     setIsGenerating(true);
 
-    // Simulate AI synthesis animation
-    setTimeout(() => {
-      const data: AssessmentData = {
-        experience,
-        languages,
-        aiTopics,
-        goal,
-        pace,
-        dailyMinutes
-      };
-      applyAssessment(data);
+    const data: AssessmentData = {
+      experience,
+      languages,
+      aiTopics,
+      goal,
+      pace,
+      dailyMinutes,
+      name: "Learner"
+    };
+
+    try {
+      await applyAssessment(data);
+    } catch (err) {
+      console.warn("Assessment execution error:", err);
+    } finally {
       setIsGenerating(false);
       setShowResult(true);
-    }, 1800);
+    }
   };
 
   // ── GENERATING STATE ────────────────────────────────────────────────────────

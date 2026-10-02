@@ -1,0 +1,787 @@
+{
+  "success": true,
+  "action": "assessment",
+  "data": {
+    "profile": {
+      "id": "sample-fixtures-id",
+      "name": "Sample Learner",
+      "level": "Beginner",
+      "role": "Intermediate",
+      "goal": "Become an ML Engineer",
+      "targetRole": "ML Engineer",
+      "experience": "Self-assessed: Intermediate",
+      "knownLanguages": [
+        "Python"
+      ],
+      "knownTopics": [
+        "NumPy"
+      ],
+      "targetTopics": [],
+      "learningPace": "Balanced",
+      "dailyCommitmentMinutes": 45,
+      "streakDays": 0,
+      "questionsSolved": 0,
+      "accuracyRate": 0,
+      "conceptsMastered": 1,
+      "skills": {
+        "Python": 81,
+        "Statistics": 40,
+        "Machine Learning": 40,
+        "Deep Learning": 40,
+        "NLP": 40,
+        "Generative AI": 40
+      },
+      "strengths": [],
+      "weaknesses": [],
+      "conceptStates": [
+        {
+          "concept": "python_basics",
+          "mastery": 85,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "python_data_structures",
+          "mastery": 80,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "numpy_arrays",
+          "mastery": 80,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "matrix_shapes",
+          "mastery": 80,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "pandas_dataframes",
+          "mastery": 80,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "probability_basics",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "std_variance",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "distributions",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "hypothesis_testing",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "linear_regression",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "gradient_descent",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "bias_variance",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "overfitting",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "regularization",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "decision_trees",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "confusion_matrix_roc",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "cross_validation",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "neural_networks",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "backpropagation",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "cnns",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "tokenization",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "word_embeddings",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "transformers_attention",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "prompt_engineering",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "rag_chunking",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        },
+        {
+          "concept": "llm_finetuning",
+          "mastery": 40,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0.1,
+          "trend": "stable"
+        }
+      ],
+      "recentAdaptiveEvents": []
+    },
+    "weakness_report": {
+      "strong": [],
+      "average": [],
+      "weak": [],
+      "untried": [
+        "python_basics",
+        "python_data_structures",
+        "numpy_arrays",
+        "matrix_shapes",
+        "pandas_dataframes",
+        "probability_basics",
+        "std_variance",
+        "distributions",
+        "hypothesis_testing",
+        "linear_regression",
+        "gradient_descent",
+        "bias_variance",
+        "overfitting",
+        "regularization",
+        "decision_trees",
+        "confusion_matrix_roc",
+        "cross_validation",
+        "neural_networks",
+        "backpropagation",
+        "cnns",
+        "tokenization",
+        "word_embeddings",
+        "transformers_attention",
+        "prompt_engineering",
+        "rag_chunking",
+        "llm_finetuning"
+      ]
+    },
+    "path": {
+      "goal": "ML Engineer",
+      "goalLabel": "become an ML Engineer",
+      "targets": [
+        "pandas_dataframes",
+        "linear_regression",
+        "gradient_descent",
+        "bias_variance",
+        "overfitting",
+        "regularization",
+        "decision_trees",
+        "confusion_matrix_roc",
+        "cross_validation",
+        "neural_networks",
+        "backpropagation"
+      ],
+      "nodes": [
+        {
+          "id": "node-python-basics",
+          "conceptId": "python_basics",
+          "title": "Python Basics (Variables, Loops, Functions)",
+          "category": "Python",
+          "status": "completed",
+          "progress": 100,
+          "mastery": 85,
+          "estimatedMinutes": 0,
+          "reason": "Skipped: you already know this (mastery 85).",
+          "isRevision": false,
+          "skipped": true,
+          "prerequisites": [],
+          "foundationFor": null,
+          "order": 1
+        },
+        {
+          "id": "node-python-data-structures",
+          "conceptId": "python_data_structures",
+          "title": "Python Data Structures",
+          "category": "Python",
+          "status": "completed",
+          "progress": 100,
+          "mastery": 80,
+          "estimatedMinutes": 0,
+          "reason": "Skipped: you already know this (mastery 80).",
+          "isRevision": false,
+          "skipped": true,
+          "prerequisites": [
+            "python_basics"
+          ],
+          "foundationFor": null,
+          "order": 2
+        },
+        {
+          "id": "node-numpy-arrays",
+          "conceptId": "numpy_arrays",
+          "title": "NumPy Arrays & Vectorization",
+          "category": "Python",
+          "status": "completed",
+          "progress": 100,
+          "mastery": 80,
+          "estimatedMinutes": 0,
+          "reason": "Skipped: you already know this (mastery 80).",
+          "isRevision": false,
+          "skipped": true,
+          "prerequisites": [
+            "python_data_structures"
+          ],
+          "foundationFor": null,
+          "order": 3
+        },
+        {
+          "id": "node-matrix-shapes",
+          "conceptId": "matrix_shapes",
+          "title": "Matrix Multiplication & Shapes",
+          "category": "Python",
+          "status": "completed",
+          "progress": 100,
+          "mastery": 80,
+          "estimatedMinutes": 0,
+          "reason": "Skipped: you already know this (mastery 80).",
+          "isRevision": false,
+          "skipped": true,
+          "prerequisites": [
+            "numpy_arrays"
+          ],
+          "foundationFor": null,
+          "order": 4
+        },
+        {
+          "id": "node-pandas-dataframes",
+          "conceptId": "pandas_dataframes",
+          "title": "Pandas DataFrames",
+          "category": "Python",
+          "status": "completed",
+          "progress": 100,
+          "mastery": 80,
+          "estimatedMinutes": 0,
+          "reason": "Skipped: you already know this (mastery 80).",
+          "isRevision": false,
+          "skipped": true,
+          "prerequisites": [
+            "numpy_arrays"
+          ],
+          "foundationFor": null,
+          "order": 5
+        },
+        {
+          "id": "node-probability-basics",
+          "conceptId": "probability_basics",
+          "title": "Probability Fundamentals",
+          "category": "Statistics",
+          "status": "current",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 24,
+          "reason": "Prerequisite for Decision Trees.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [],
+          "foundationFor": null,
+          "order": 6
+        },
+        {
+          "id": "node-decision-trees",
+          "conceptId": "decision_trees",
+          "title": "Decision Trees",
+          "category": "Machine Learning",
+          "status": "recommended",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "probability_basics",
+            "pandas_dataframes"
+          ],
+          "foundationFor": null,
+          "order": 7
+        },
+        {
+          "id": "node-confusion-matrix-roc",
+          "conceptId": "confusion_matrix_roc",
+          "title": "Confusion Matrix & ROC-AUC",
+          "category": "Machine Learning",
+          "status": "recommended",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "probability_basics",
+            "decision_trees"
+          ],
+          "foundationFor": null,
+          "order": 8
+        },
+        {
+          "id": "node-std-variance",
+          "conceptId": "std_variance",
+          "title": "Standard Deviation & Variance",
+          "category": "Statistics",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 24,
+          "reason": "Prerequisite for Linear Regression. Unlocks after: Probability Fundamentals.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "probability_basics"
+          ],
+          "foundationFor": null,
+          "order": 9
+        },
+        {
+          "id": "node-linear-regression",
+          "conceptId": "linear_regression",
+          "title": "Linear Regression",
+          "category": "Machine Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Standard Deviation & Variance.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "matrix_shapes",
+            "std_variance"
+          ],
+          "foundationFor": null,
+          "order": 10
+        },
+        {
+          "id": "node-bias-variance",
+          "conceptId": "bias_variance",
+          "title": "Bias vs Variance Tradeoff",
+          "category": "Machine Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Linear Regression, Standard Deviation & Variance.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "linear_regression",
+            "std_variance"
+          ],
+          "foundationFor": null,
+          "order": 11
+        },
+        {
+          "id": "node-gradient-descent",
+          "conceptId": "gradient_descent",
+          "title": "Gradient Descent Optimization",
+          "category": "Machine Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Linear Regression.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "linear_regression"
+          ],
+          "foundationFor": null,
+          "order": 12
+        },
+        {
+          "id": "node-overfitting",
+          "conceptId": "overfitting",
+          "title": "Overfitting & Underfitting",
+          "category": "Machine Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Bias vs Variance Tradeoff.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "bias_variance"
+          ],
+          "foundationFor": null,
+          "order": 13
+        },
+        {
+          "id": "node-cross-validation",
+          "conceptId": "cross_validation",
+          "title": "Cross-Validation",
+          "category": "Machine Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Overfitting & Underfitting.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "overfitting"
+          ],
+          "foundationFor": null,
+          "order": 14
+        },
+        {
+          "id": "node-regularization",
+          "conceptId": "regularization",
+          "title": "Regularization (L1/L2)",
+          "category": "Machine Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Overfitting & Underfitting, Gradient Descent Optimization.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "overfitting",
+            "gradient_descent"
+          ],
+          "foundationFor": null,
+          "order": 15
+        },
+        {
+          "id": "node-neural-networks",
+          "conceptId": "neural_networks",
+          "title": "Neural Network Fundamentals",
+          "category": "Deep Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 36,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Gradient Descent Optimization.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "gradient_descent",
+            "matrix_shapes"
+          ],
+          "foundationFor": null,
+          "order": 16
+        },
+        {
+          "id": "node-backpropagation",
+          "conceptId": "backpropagation",
+          "title": "Backpropagation",
+          "category": "Deep Learning",
+          "status": "locked",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 36,
+          "reason": "Core concept for your goal: become an ML Engineer. Unlocks after: Neural Network Fundamentals.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "neural_networks"
+          ],
+          "foundationFor": null,
+          "order": 17
+        }
+      ],
+      "milestones": [
+        {
+          "id": "stage-python",
+          "title": "Python",
+          "category": "Python",
+          "status": "completed",
+          "nodeIds": [
+            "node-python-basics",
+            "node-python-data-structures",
+            "node-numpy-arrays",
+            "node-matrix-shapes",
+            "node-pandas-dataframes"
+          ],
+          "progress": 100
+        },
+        {
+          "id": "stage-statistics",
+          "title": "Statistics",
+          "category": "Statistics",
+          "status": "current",
+          "nodeIds": [
+            "node-probability-basics",
+            "node-std-variance"
+          ],
+          "progress": 0
+        },
+        {
+          "id": "stage-machine-learning",
+          "title": "Machine Learning",
+          "category": "Machine Learning",
+          "status": "upcoming",
+          "nodeIds": [
+            "node-decision-trees",
+            "node-confusion-matrix-roc",
+            "node-linear-regression",
+            "node-bias-variance",
+            "node-gradient-descent",
+            "node-overfitting",
+            "node-cross-validation",
+            "node-regularization"
+          ],
+          "progress": 0
+        },
+        {
+          "id": "stage-deep-learning",
+          "title": "Deep Learning",
+          "category": "Deep Learning",
+          "status": "upcoming",
+          "nodeIds": [
+            "node-neural-networks",
+            "node-backpropagation"
+          ],
+          "progress": 0
+        }
+      ],
+      "currentNode": {
+        "id": "node-probability-basics",
+        "conceptId": "probability_basics",
+        "title": "Probability Fundamentals",
+        "category": "Statistics",
+        "status": "current",
+        "progress": 0,
+        "mastery": 40,
+        "estimatedMinutes": 24,
+        "reason": "Prerequisite for Decision Trees.",
+        "isRevision": false,
+        "skipped": false,
+        "prerequisites": [],
+        "foundationFor": null,
+        "order": 6
+      },
+      "nextNodes": [
+        {
+          "id": "node-decision-trees",
+          "conceptId": "decision_trees",
+          "title": "Decision Trees",
+          "category": "Machine Learning",
+          "status": "recommended",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "probability_basics",
+            "pandas_dataframes"
+          ],
+          "foundationFor": null,
+          "order": 7
+        },
+        {
+          "id": "node-confusion-matrix-roc",
+          "conceptId": "confusion_matrix_roc",
+          "title": "Confusion Matrix & ROC-AUC",
+          "category": "Machine Learning",
+          "status": "recommended",
+          "progress": 0,
+          "mastery": 40,
+          "estimatedMinutes": 30,
+          "reason": "Core concept for your goal: become an ML Engineer.",
+          "isRevision": false,
+          "skipped": false,
+          "prerequisites": [
+            "probability_basics",
+            "decision_trees"
+          ],
+          "foundationFor": null,
+          "order": 8
+        }
+      ],
+      "changes": [],
+      "changedNow": true,
+      "beforeAfter": "Initial path created: start with Probability Fundamentals.",
+      "whyThisPath": "You’re ready to dive into Probability Fundamentals, then Decision Trees, Confusion Matrix & ROC‑AUC, building on your strong Python, data structures, NumPy, and matrix skills. This balanced 45‑minute daily plan fits your two‑week timeline and moves you directly toward becoming an ML Engineer.",
+      "whySource": "llm",
+      "estimatedWeeksRemaining": 2,
+      "totalEstimatedMinutes": 360,
+      "dailyPlan": [
+        {
+          "id": "plan-practice-probability-basics",
+          "title": "Practice Probability Fundamentals (Easy questions)",
+          "type": "practice",
+          "durationMinutes": 15,
+          "completed": false,
+          "conceptId": "probability_basics",
+          "difficulty": "Easy"
+        },
+        {
+          "id": "plan-lesson-probability-basics",
+          "title": "Lesson: Probability Fundamentals",
+          "type": "lesson",
+          "durationMinutes": 24,
+          "completed": false,
+          "conceptId": "probability_basics"
+        }
+      ],
+      "pathHash": "74339d8fc589f8bd",
+      "preview": false
+    },
+    "level": "Beginner",
+    "goal": "ML Engineer",
+    "firstStep": {
+      "type": "diagnostic",
+      "conceptIds": [
+        "probability_basics",
+        "decision_trees",
+        "confusion_matrix_roc"
+      ],
+      "message": "Welcome! Your path toward become an ML Engineer is ready. Start with a short diagnostic on Probability Fundamentals, Decision Trees, Confusion Matrix & ROC-AUC so we can fine-tune it."
+    }
+  },
+  "error": null,
+  "fallback_data": null
+}

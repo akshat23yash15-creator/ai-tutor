@@ -1,0 +1,634 @@
+{
+  "success": true,
+  "action": "get_profile",
+  "data": {
+    "profile": {
+      "id": "akshat-intermediate",
+      "name": "Akshat",
+      "level": "Intermediate",
+      "role": "Software Developer",
+      "goal": "Become an ML Engineer",
+      "targetRole": "ML Engineer",
+      "experience": "2+ years programming in Python, JavaScript and SQL. Knows NumPy, Pandas and basic linear regression.",
+      "knownLanguages": [
+        "Python",
+        "JavaScript",
+        "SQL"
+      ],
+      "knownTopics": [
+        "Python",
+        "NumPy",
+        "Pandas",
+        "Linear Regression"
+      ],
+      "targetTopics": [
+        "Bias vs Variance",
+        "Regularization",
+        "Model Evaluation",
+        "Deep Learning",
+        "MLOps"
+      ],
+      "learningPace": "Balanced",
+      "dailyCommitmentMinutes": 45,
+      "streakDays": 12,
+      "questionsSolved": 179,
+      "accuracyRate": 82,
+      "conceptsMastered": 4,
+      "skills": {
+        "Python": 88,
+        "Statistics": 62,
+        "Machine Learning": 71,
+        "Deep Learning": 35,
+        "NLP": 20,
+        "Generative AI": 15
+      },
+      "strengths": [
+        {
+          "name": "Python Basics (Variables, Loops, Functions)",
+          "score": 92,
+          "description": "Strong command at 92% mastery across 30 practice questions. Recent accuracy 90%."
+        },
+        {
+          "name": "Python Data Structures",
+          "score": 90,
+          "description": "Strong command at 90% mastery across 25 practice questions. Recent accuracy 90%."
+        },
+        {
+          "name": "NumPy Arrays & Vectorization",
+          "score": 86,
+          "description": "Strong command at 86% mastery across 20 practice questions. Recent accuracy 90%."
+        },
+        {
+          "name": "Linear Regression",
+          "score": 85,
+          "description": "Strong command at 85% mastery across 15 practice questions. Recent accuracy 80%."
+        },
+        {
+          "name": "Pandas DataFrames",
+          "score": 84,
+          "description": "Strong command at 84% mastery across 18 practice questions. Recent accuracy 80%."
+        },
+        {
+          "name": "Matrix Multiplication & Shapes",
+          "score": 83,
+          "description": "Strong command at 83% mastery across 12 practice questions. Recent accuracy 80%."
+        },
+        {
+          "name": "Decision Trees",
+          "score": 78,
+          "description": "Strong command at 78% mastery across 10 practice questions. Recent accuracy 80%."
+        }
+      ],
+      "weaknesses": [
+        {
+          "name": "Bias vs Variance Tradeoff",
+          "score": 54,
+          "reason": "Mastery of 54% is below the 65% proficiency threshold. Recent accuracy: 50% over the last 8 questions. Improving, but not yet solid.",
+          "recommendedLessonId": "bias-variance"
+        },
+        {
+          "name": "Gradient Descent Optimization",
+          "score": 61,
+          "reason": "Mastery of 61% is below the 65% proficiency threshold. Recent accuracy: 62% over the last 8 questions.",
+          "recommendedLessonId": "gradient-descent"
+        },
+        {
+          "name": "Confusion Matrix & ROC-AUC",
+          "score": 63,
+          "reason": "Mastery of 63% is below the 65% proficiency threshold. Recent accuracy: 67% over the last 6 questions.",
+          "recommendedLessonId": "confusion-matrix-roc"
+        }
+      ],
+      "conceptStates": [
+        {
+          "concept": "python_basics",
+          "mastery": 92,
+          "attempts": 30,
+          "correct": 28,
+          "recentAccuracy": 90,
+          "confidence": 1,
+          "trend": "stable"
+        },
+        {
+          "concept": "python_data_structures",
+          "mastery": 90,
+          "attempts": 25,
+          "correct": 22,
+          "recentAccuracy": 90,
+          "confidence": 1,
+          "trend": "stable"
+        },
+        {
+          "concept": "numpy_arrays",
+          "mastery": 86,
+          "attempts": 20,
+          "correct": 17,
+          "recentAccuracy": 90,
+          "confidence": 1,
+          "trend": "stable"
+        },
+        {
+          "concept": "matrix_shapes",
+          "mastery": 83.2,
+          "attempts": 12,
+          "correct": 10,
+          "recentAccuracy": 80,
+          "confidence": 1,
+          "trend": "improving"
+        },
+        {
+          "concept": "pandas_dataframes",
+          "mastery": 84,
+          "attempts": 18,
+          "correct": 15,
+          "recentAccuracy": 80,
+          "confidence": 1,
+          "trend": "improving"
+        },
+        {
+          "concept": "probability_basics",
+          "mastery": 70,
+          "attempts": 4,
+          "correct": 3,
+          "recentAccuracy": 75,
+          "confidence": 0.4,
+          "trend": "improving"
+        },
+        {
+          "concept": "std_variance",
+          "mastery": 66,
+          "attempts": 4,
+          "correct": 3,
+          "recentAccuracy": 75,
+          "confidence": 0.4,
+          "trend": "improving"
+        },
+        {
+          "concept": "distributions",
+          "mastery": 45,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "hypothesis_testing",
+          "mastery": 31,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "linear_regression",
+          "mastery": 85,
+          "attempts": 15,
+          "correct": 13,
+          "recentAccuracy": 80,
+          "confidence": 1,
+          "trend": "improving"
+        },
+        {
+          "concept": "gradient_descent",
+          "mastery": 61,
+          "attempts": 8,
+          "correct": 5,
+          "recentAccuracy": 62,
+          "confidence": 0.8,
+          "trend": "stable"
+        },
+        {
+          "concept": "bias_variance",
+          "mastery": 54,
+          "attempts": 8,
+          "correct": 4,
+          "recentAccuracy": 50,
+          "confidence": 0.8,
+          "trend": "improving"
+        },
+        {
+          "concept": "overfitting",
+          "mastery": 72,
+          "attempts": 8,
+          "correct": 6,
+          "recentAccuracy": 75,
+          "confidence": 0.8,
+          "trend": "improving"
+        },
+        {
+          "concept": "regularization",
+          "mastery": 66,
+          "attempts": 6,
+          "correct": 4,
+          "recentAccuracy": 67,
+          "confidence": 0.6,
+          "trend": "stable"
+        },
+        {
+          "concept": "decision_trees",
+          "mastery": 78,
+          "attempts": 10,
+          "correct": 8,
+          "recentAccuracy": 80,
+          "confidence": 1,
+          "trend": "improving"
+        },
+        {
+          "concept": "confusion_matrix_roc",
+          "mastery": 63,
+          "attempts": 6,
+          "correct": 4,
+          "recentAccuracy": 67,
+          "confidence": 0.6,
+          "trend": "stable"
+        },
+        {
+          "concept": "cross_validation",
+          "mastery": 72.2,
+          "attempts": 5,
+          "correct": 4,
+          "recentAccuracy": 80,
+          "confidence": 0.5,
+          "trend": "improving"
+        },
+        {
+          "concept": "neural_networks",
+          "mastery": 50,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "backpropagation",
+          "mastery": 30,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "cnns",
+          "mastery": 25,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "tokenization",
+          "mastery": 35,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "word_embeddings",
+          "mastery": 15,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "transformers_attention",
+          "mastery": 10,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "prompt_engineering",
+          "mastery": 30,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "rag_chunking",
+          "mastery": 10,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        },
+        {
+          "concept": "llm_finetuning",
+          "mastery": 5,
+          "attempts": 0,
+          "correct": 0,
+          "recentAccuracy": null,
+          "confidence": 0,
+          "trend": "stable"
+        }
+      ],
+      "recentAdaptiveEvents": []
+    },
+    "weakness_report": {
+      "strong": [
+        {
+          "concept": "python_basics",
+          "name": "Python Basics (Variables, Loops, Functions)",
+          "category": "Python",
+          "mastery": 92,
+          "attempts": 30,
+          "classification": "Strong",
+          "priority": 20.1,
+          "label": "LOW",
+          "reason": "Mastery 92%, 30 attempts, 90% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "python_basics",
+            "name": "Python Basics (Variables, Loops, Functions)",
+            "mastery": 92,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "python_data_structures",
+          "name": "Python Data Structures",
+          "category": "Python",
+          "mastery": 90,
+          "attempts": 25,
+          "classification": "Strong",
+          "priority": 21,
+          "label": "LOW",
+          "reason": "Mastery 90%, 25 attempts, 90% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "python_data_structures",
+            "name": "Python Data Structures",
+            "mastery": 90,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "numpy_arrays",
+          "name": "NumPy Arrays & Vectorization",
+          "category": "Python",
+          "mastery": 86,
+          "attempts": 20,
+          "classification": "Strong",
+          "priority": 22.8,
+          "label": "LOW",
+          "reason": "Mastery 86%, 20 attempts, 90% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "numpy_arrays",
+            "name": "NumPy Arrays & Vectorization",
+            "mastery": 86,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "linear_regression",
+          "name": "Linear Regression",
+          "category": "Machine Learning",
+          "mastery": 85,
+          "attempts": 15,
+          "classification": "Strong",
+          "priority": 19.8,
+          "label": "LOW",
+          "reason": "Mastery 85%, 15 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "linear_regression",
+            "name": "Linear Regression",
+            "mastery": 85,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "pandas_dataframes",
+          "name": "Pandas DataFrames",
+          "category": "Python",
+          "mastery": 84,
+          "attempts": 18,
+          "classification": "Strong",
+          "priority": 20.2,
+          "label": "LOW",
+          "reason": "Mastery 84%, 18 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "pandas_dataframes",
+            "name": "Pandas DataFrames",
+            "mastery": 84,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "matrix_shapes",
+          "name": "Matrix Multiplication & Shapes",
+          "category": "Python",
+          "mastery": 83.2,
+          "attempts": 12,
+          "classification": "Strong",
+          "priority": 20.6,
+          "label": "LOW",
+          "reason": "Mastery 83%, 12 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "matrix_shapes",
+            "name": "Matrix Multiplication & Shapes",
+            "mastery": 83.2,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "decision_trees",
+          "name": "Decision Trees",
+          "category": "Machine Learning",
+          "mastery": 78,
+          "attempts": 10,
+          "classification": "Strong",
+          "priority": 22.9,
+          "label": "LOW",
+          "reason": "Mastery 78%, 10 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "decision_trees",
+            "name": "Decision Trees",
+            "mastery": 78,
+            "is_prerequisite": false
+          }
+        }
+      ],
+      "average": [
+        {
+          "concept": "gradient_descent",
+          "name": "Gradient Descent Optimization",
+          "category": "Machine Learning",
+          "mastery": 61,
+          "attempts": 8,
+          "classification": "Average",
+          "priority": 36.2,
+          "label": "LOW",
+          "reason": "Mastery 61%, 8 attempts, 62% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "gradient_descent",
+            "name": "Gradient Descent Optimization",
+            "mastery": 61,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "confusion_matrix_roc",
+          "name": "Confusion Matrix & ROC-AUC",
+          "category": "Machine Learning",
+          "mastery": 63,
+          "attempts": 6,
+          "classification": "Average",
+          "priority": 32.7,
+          "label": "LOW",
+          "reason": "Mastery 63%, 6 attempts, 67% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "confusion_matrix_roc",
+            "name": "Confusion Matrix & ROC-AUC",
+            "mastery": 63,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "regularization",
+          "name": "Regularization (L1/L2)",
+          "category": "Machine Learning",
+          "mastery": 66,
+          "attempts": 6,
+          "classification": "Average",
+          "priority": 31.3,
+          "label": "LOW",
+          "reason": "Mastery 66%, 6 attempts, 67% recent accuracy, trend stable",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 54,
+            "is_prerequisite": true
+          }
+        },
+        {
+          "concept": "overfitting",
+          "name": "Overfitting & Underfitting",
+          "category": "Machine Learning",
+          "mastery": 72,
+          "attempts": 8,
+          "classification": "Average",
+          "priority": 24.4,
+          "label": "LOW",
+          "reason": "Mastery 72%, 8 attempts, 75% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 54,
+            "is_prerequisite": true
+          }
+        },
+        {
+          "concept": "std_variance",
+          "name": "Standard Deviation & Variance",
+          "category": "Statistics",
+          "mastery": 66,
+          "attempts": 4,
+          "classification": "Average",
+          "priority": 23.1,
+          "label": "LOW",
+          "reason": "Mastery 66%, 4 attempts, 75% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "std_variance",
+            "name": "Standard Deviation & Variance",
+            "mastery": 66,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "probability_basics",
+          "name": "Probability Fundamentals",
+          "category": "Statistics",
+          "mastery": 70,
+          "attempts": 4,
+          "classification": "Average",
+          "priority": 21.2,
+          "label": "LOW",
+          "reason": "Mastery 70%, 4 attempts, 75% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "probability_basics",
+            "name": "Probability Fundamentals",
+            "mastery": 70,
+            "is_prerequisite": false
+          }
+        },
+        {
+          "concept": "cross_validation",
+          "name": "Cross-Validation",
+          "category": "Machine Learning",
+          "mastery": 72.2,
+          "attempts": 5,
+          "classification": "Average",
+          "priority": 20.5,
+          "label": "LOW",
+          "reason": "Mastery 72%, 5 attempts, 80% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 54,
+            "is_prerequisite": true
+          }
+        }
+      ],
+      "weak": [
+        {
+          "concept": "bias_variance",
+          "name": "Bias vs Variance Tradeoff",
+          "category": "Machine Learning",
+          "mastery": 54,
+          "attempts": 8,
+          "classification": "Weak",
+          "priority": 36.2,
+          "label": "LOW",
+          "reason": "Mastery 54%, 8 attempts, 50% recent accuracy, trend improving",
+          "tutor_alert": null,
+          "recommended_revision": {
+            "concept": "bias_variance",
+            "name": "Bias vs Variance Tradeoff",
+            "mastery": 54,
+            "is_prerequisite": false
+          }
+        }
+      ],
+      "untried": [
+        "distributions",
+        "hypothesis_testing",
+        "neural_networks",
+        "backpropagation",
+        "cnns",
+        "tokenization",
+        "word_embeddings",
+        "transformers_attention",
+        "prompt_engineering",
+        "rag_chunking",
+        "llm_finetuning"
+      ]
+    }
+  },
+  "error": null,
+  "fallback_data": null
+}

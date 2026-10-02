@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { useLearner } from "@/contexts/LearnerContext";
 import { getTutorReply } from "@/data/mockTutorResponses";
 import { DemoProfileSwitcher } from "@/components/common/DemoProfileSwitcher";
+import { tutorChat } from "@/services/api";
+import { mapBackendTutorResponseToUI } from "@/services/adapters";
 import {
   Bot,
   Send,
@@ -9,14 +11,10 @@ import {
   Plus,
   MessageSquare,
   Trash2,
-  HelpCircle,
   Code2,
   Lightbulb,
-  CheckCircle2,
-  ArrowRight,
-  RefreshCw,
-  Flame,
-  Brain
+  HelpCircle,
+  Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
@@ -24,6 +22,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
+import { toast } from "sonner";
 
 interface ChatMessage {
   id: string;
@@ -31,6 +30,7 @@ interface ChatMessage {
   text: string;
   timestamp: string;
   followUps?: string[];
+  mode?: string;
   quiz?: {
     question: string;
     options: string[];
@@ -40,14 +40,16 @@ interface ChatMessage {
 }
 
 export const Tutor: React.FC = () => {
-  const { profile } = useLearner();
+  const { profile, backendLearnerId, isOnline } = useLearner();
+  const conversationIdRef = useRef<string | undefined>(undefined);
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "msg-welcome",
       sender: "tutor",
       text: `Hello **${profile.name}**! I'm your dedicated AI Tutor. 
 
-I'm aware that your current goal is **${profile.goal}**, your assessed level is **${profile.level}**, and your active focus module is **Bias vs Variance & Regularization**.
+I'm calibrated for your goal of **${profile.goal}**, assessed at **${profile.level}** level, with active focus on **Bias vs Variance & Optimization**.
 
 Ask me any concept question, request intuitive analogies, or ask for practice drills!`,
       timestamp: "Just now",
@@ -70,9 +72,31 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const handleSendMessage = (textToSend?: string) => {
+  // Reset conversation if learner changes
+  useEffect(() => {
+    conversationIdRef.current = undefined;
+  }, [backendLearnerId]);
+
+  const handleSendMessage = async (textToSend?: string, specificMode?: string) => {
     const query = textToSend || inputText;
     if (!query.trim()) return;
+
+    // Detect mode from text or explicit argument
+    let mode: string = specificMode || "explanation";
+    const lower = query.toLowerCase();
+    if (specificMode) {
+      mode = specificMode;
+    } else if (lower.includes("simpler") || lower.includes("like i'm a beginner") || lower.includes("eli5")) {
+      mode = "simplify";
+    } else if (lower.includes("example") || lower.includes("real world")) {
+      mode = "example";
+    } else if (lower.includes("code") || lower.includes("python") || lower.includes("implementation")) {
+      mode = "code";
+    } else if (lower.includes("hint") || lower.includes("stuck")) {
+      mode = "hint";
+    } else if (lower.includes("why am i learning this") || lower.includes("why this next")) {
+      mode = "path";
+    }
 
     const userMessage: ChatMessage = {
       id: `usr-${Date.now()}`,
@@ -85,23 +109,82 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
     if (!textToSend) setInputText("");
     setIsTyping(true);
 
-    // Simulate smart local response
-    setTimeout(() => {
-      const result = getTutorReply(query);
-      const tutorMessage: ChatMessage = {
-        id: `tut-${Date.now()}`,
-        sender: "tutor",
-        text: result.reply,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        followUps: result.followUps,
-        quiz: result.quiz
-      };
-      setMessages((prev) => [...prev, tutorMessage]);
-      setIsTyping(false);
-    }, 450);
+    let replyHandled = false;
+
+    // Call live ML backend if online
+    if (isOnline) {
+      try {
+        const res = await tutorChat(backendLearnerId, {
+          message: query,
+          conversation_id: conversationIdRef.current,
+          mode,
+          current_topic: activeConversation
+        });
+
+        if (res.success && res.data) {
+          // Persist conversation ID for continuous multi-turn dialogue
+          if (res.data.conversationId) {
+            conversationIdRef.current = res.data.conversationId;
+          }
+
+          const uiData = mapBackendTutorResponseToUI(res.data);
+          const tutorMessage: ChatMessage = {
+            id: `tut-${Date.now()}`,
+            sender: "tutor",
+            text: uiData.reply,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            followUps: uiData.followUps,
+            quiz: uiData.quiz,
+            mode: res.data.mode
+          };
+
+          setMessages((prev) => [...prev, tutorMessage]);
+          replyHandled = true;
+        } else if (res.fallback_data && res.fallback_data.message) {
+          // Usable fallback data provided by backend
+          const tutorMessage: ChatMessage = {
+            id: `tut-${Date.now()}`,
+            sender: "tutor",
+            text: res.fallback_data.message,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            followUps: res.fallback_data.followUpSuggestions || [],
+            quiz: res.fallback_data.checkpointQuestion
+          };
+          setMessages((prev) => [...prev, tutorMessage]);
+          replyHandled = true;
+        } else if (res.error?.code === "RATE_LIMITED" || res.error?.code === "MODEL_RATE_LIMIT") {
+          toast.warning("Please wait a moment before trying again.", {
+            description: res.error.message || "Tutor engine rate limit reached."
+          });
+        }
+      } catch (err) {
+        console.warn("Live tutor request failed, using mock fallback:", err);
+      }
+    }
+
+    // Fallback to local mock response if backend was unavailable or failed
+    if (!replyHandled) {
+      setTimeout(() => {
+        const result = getTutorReply(query);
+        const tutorMessage: ChatMessage = {
+          id: `tut-${Date.now()}`,
+          sender: "tutor",
+          text: result.reply,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          followUps: result.followUps,
+          quiz: result.quiz
+        };
+        setMessages((prev) => [...prev, tutorMessage]);
+        setIsTyping(false);
+      }, 350);
+      return;
+    }
+
+    setIsTyping(false);
   };
 
   const handleStartNewChat = () => {
+    conversationIdRef.current = undefined;
     setMessages([
       {
         id: `msg-${Date.now()}`,
@@ -129,11 +212,17 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
             <Bot className="w-6 h-6 animate-pulse" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-black text-foreground">
-              LearnAI Personal Tutor
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl md:text-2xl font-black text-foreground">
+                LearnAI Personal Tutor
+              </h1>
+              <span className={cn(
+                "w-2 h-2 rounded-full",
+                isOnline ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+              )} />
+            </div>
             <p className="text-xs text-muted-foreground font-mono">
-              Context-Aware • Calibrated for {profile.level} ({profile.name})
+              {isOnline ? "Live ML Engine Active" : "Local Tutor Fallback"} • Calibrated for {profile.level} ({profile.name})
             </p>
           </div>
         </div>
@@ -155,7 +244,44 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
               <span>New Conversation</span>
             </button>
 
-            <div className="space-y-1">
+            {/* Quick Pedagogical Modes */}
+            <div className="space-y-1.5 pt-1">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-2 pb-0.5">
+                Tutor Pedagogical Modes
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  onClick={() => handleSendMessage("Explain this like I'm a beginner with intuitive analogies.", "simplify")}
+                  className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
+                >
+                  <Sparkles className="w-3 h-3 text-primary shrink-0" />
+                  <span className="truncate">Explain Simpler</span>
+                </button>
+                <button
+                  onClick={() => handleSendMessage("Give me a real-world production example of this concept.", "example")}
+                  className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
+                >
+                  <Lightbulb className="w-3 h-3 text-amber-400 shrink-0" />
+                  <span className="truncate">Give Example</span>
+                </button>
+                <button
+                  onClick={() => handleSendMessage("Show me a clean Python implementation with comments.", "code")}
+                  className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
+                >
+                  <Code2 className="w-3 h-3 text-blue-400 shrink-0" />
+                  <span className="truncate">Show Code</span>
+                </button>
+                <button
+                  onClick={() => handleSendMessage("Give me a hint on my current topic without spoiling the answer.", "hint")}
+                  className="p-2 rounded-xl text-[11px] font-semibold text-left border border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex items-center gap-1.5"
+                >
+                  <HelpCircle className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <span className="truncate">Give Hint</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1 pt-2 border-t border-border">
               <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-2 pb-1">
                 Recent Sessions
               </div>
@@ -168,7 +294,10 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
               ].map((topic, i) => (
                 <button
                   key={i}
-                  onClick={() => setActiveConversation(topic)}
+                  onClick={() => {
+                    setActiveConversation(topic);
+                    conversationIdRef.current = undefined;
+                  }}
                   className={cn(
                     "w-full p-2.5 rounded-xl text-xs font-semibold text-left flex items-center gap-2 transition-all truncate",
                     activeConversation === topic
@@ -191,7 +320,7 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
                 "Explain gradient descent",
                 "Why does overfitting happen?",
                 "Give me a practice question",
-                "Explain this like I'm a beginner"
+                "Why am I learning this next?"
               ].map((prompt, i) => (
                 <button
                   key={i}
@@ -215,13 +344,16 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
               <div>
                 <div className="text-sm font-bold text-foreground">{activeConversation}</div>
                 <div className="text-[10px] text-muted-foreground font-mono">
-                  Active Knowledge Focus: Bias-Variance & Optimization
+                  Context: {profile.name} • {profile.goal}
                 </div>
               </div>
             </div>
 
             <button
-              onClick={() => setMessages([])}
+              onClick={() => {
+                conversationIdRef.current = undefined;
+                setMessages([]);
+              }}
               className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               title="Clear transcript"
             >
@@ -270,15 +402,20 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
 
                     <div
                       className={cn(
-                        "text-[10px] font-mono mt-2 text-right opacity-60",
+                        "text-[10px] font-mono mt-2 text-right opacity-60 flex items-center justify-end gap-2",
                         msg.sender === "user" ? "text-white" : "text-muted-foreground"
                       )}
                     >
-                      {msg.timestamp}
+                      {msg.mode && (
+                        <span className="uppercase text-[9px] px-1.5 py-0.2 rounded bg-background/50 border border-border">
+                          mode: {msg.mode}
+                        </span>
+                      )}
+                      <span>{msg.timestamp}</span>
                     </div>
                   </div>
 
-                  {/* Optional Interactive Follow-Up Quiz inside message */}
+                  {/* Interactive Checkpoint Quiz inside message if returned by backend */}
                   {msg.quiz && (
                     <div className="p-4 rounded-2xl bg-card border border-primary/30 shadow-md space-y-3 animate-in fade-in">
                       <div className="text-xs font-bold text-primary flex items-center gap-1.5">
@@ -307,7 +444,7 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
                         <button
                           key={fIdx}
                           onClick={() => handleSendMessage(fu)}
-                          className="px-3 py-1 rounded-full text-xs font-semibold bg-background hover:bg-primary/10 hover:text-primary border border-border text-muted-foreground transition-colors shadow-sm"
+                          className="px-3 py-1 rounded-full text-xs font-semibold bg-background hover:bg-primary/10 hover:text-primary border border-border text-muted-foreground transition-colors shadow-sm text-left"
                         >
                           {fu} →
                         </button>
@@ -323,7 +460,7 @@ Ask me any concept question, request intuitive analogies, or ask for practice dr
                 <div className="w-8 h-8 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
                   <Bot className="w-4 h-4 animate-spin" />
                 </div>
-                <span>AI Tutor is formulating explanation...</span>
+                <span>AI Tutor is formulating calibrated explanation...</span>
               </div>
             )}
 

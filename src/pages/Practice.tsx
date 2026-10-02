@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLearner } from "@/contexts/LearnerContext";
 import { MOCK_PRACTICE_QUESTIONS, PracticeQuestion } from "@/data/mockQuestions";
 import { DemoProfileSwitcher } from "@/components/common/DemoProfileSwitcher";
+import { generateQuestions } from "@/services/api";
+import { mapBackendQuestionToQuestion } from "@/services/adapters";
 import {
   PenTool,
   CheckCircle2,
@@ -21,10 +23,12 @@ import {
   ChevronRight,
   AlertTriangle,
   Layers,
-  Bot
+  Bot,
+  RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const CATEGORIES = [
   "All",
@@ -39,13 +43,15 @@ const CATEGORIES = [
 const DIFFICULTIES = ["All", "Adaptive", "Easy", "Medium", "Hard"];
 
 export const Practice: React.FC = () => {
-  const { recordQuizScore, profile } = useLearner();
+  const { recordQuizScore, profile, backendLearnerId, isOnline } = useLearner();
 
   const [activeCategory, setActiveCategory] = useState<string>("Machine Learning");
   const [activeDifficulty, setActiveDifficulty] = useState<string>("Adaptive");
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [liveQuestions, setLiveQuestions] = useState<PracticeQuestion[] | null>(null);
 
   // Filter questions based on category & difficulty
-  const filteredQuestions = MOCK_PRACTICE_QUESTIONS.filter((q) => {
+  const mockFiltered = MOCK_PRACTICE_QUESTIONS.filter((q) => {
     const matchCategory = activeCategory === "All" || q.category === activeCategory;
     const matchDifficulty =
       activeDifficulty === "All" ||
@@ -54,6 +60,8 @@ export const Practice: React.FC = () => {
     return matchCategory && matchDifficulty;
   });
 
+  const filteredQuestions = (liveQuestions && liveQuestions.length > 0) ? liveQuestions : mockFiltered;
+
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, number | null>>({});
   const [isTestCompleted, setIsTestCompleted] = useState<boolean>(false);
@@ -61,6 +69,52 @@ export const Practice: React.FC = () => {
 
   const currentQ: PracticeQuestion = filteredQuestions[currentIndex] || MOCK_PRACTICE_QUESTIONS[0];
   const selectedOption = userAnswers[currentIndex] ?? null;
+
+  // Fetch live questions from ML backend
+  const fetchLiveQuestions = useCallback(async (cat = activeCategory, diff = activeDifficulty) => {
+    if (!isOnline) {
+      setLiveQuestions(null);
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const res = await generateQuestions(backendLearnerId, {
+        category: cat === "All" ? undefined : cat,
+        difficulty: diff === "All" ? "Adaptive" : diff,
+        count: 3
+      });
+
+      if (res.success && res.data?.questions && res.data.questions.length > 0) {
+        const mapped = res.data.questions.map(mapBackendQuestionToQuestion);
+        setLiveQuestions(mapped);
+        setCurrentIndex(0);
+        setUserAnswers({});
+        setIsTestCompleted(false);
+        setAdaptiveDecision(null);
+        toast.success(`Generated ${mapped.length} AI Practice Questions`, {
+          description: `Targeted for: ${res.data.concept_name || cat}`
+        });
+      } else if (res.fallback_data?.questions?.length > 0) {
+        const mapped = res.fallback_data.questions.map(mapBackendQuestionToQuestion);
+        setLiveQuestions(mapped);
+      } else {
+        setLiveQuestions(null);
+      }
+    } catch (err) {
+      console.warn("Failed to generate questions, using local questions:", err);
+      setLiveQuestions(null);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [backendLearnerId, isOnline, activeCategory, activeDifficulty]);
+
+  // Generate on initial mount or profile change if online
+  useEffect(() => {
+    if (isOnline) {
+      fetchLiveQuestions();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backendLearnerId]);
 
   const handleOptionSelect = (optionIdx: number) => {
     setUserAnswers((prev) => ({
@@ -81,7 +135,7 @@ export const Practice: React.FC = () => {
     }
   };
 
-  const handleFinishTest = () => {
+  const handleFinishTest = async () => {
     // Calculate final test scores
     let correctCount = 0;
     filteredQuestions.forEach((q, idx) => {
@@ -93,12 +147,23 @@ export const Practice: React.FC = () => {
     const totalQuestions = filteredQuestions.length;
     const scorePct = Math.round((correctCount / totalQuestions) * 100);
 
+    const rawAnswers = filteredQuestions.map((q, idx) => ({
+      question_id: q.id,
+      concept_tested: q.conceptTested,
+      difficulty: q.difficulty,
+      selected_option_index: userAnswers[idx] ?? -1,
+      correct_index: q.correctIndex,
+      is_correct: userAnswers[idx] === q.correctIndex,
+      time_taken_seconds: 35
+    }));
+
     // Call adaptive engine
-    const event = recordQuizScore(
+    const event = await recordQuizScore(
       activeCategory === "All" ? "AI Concepts" : activeCategory,
       scorePct,
       totalQuestions,
-      activeCategory === "All" ? "Machine Learning" : activeCategory
+      activeCategory === "All" ? "Machine Learning" : activeCategory,
+      rawAnswers
     );
 
     setAdaptiveDecision(event);
@@ -110,6 +175,7 @@ export const Practice: React.FC = () => {
     setCurrentIndex(0);
     setIsTestCompleted(false);
     setAdaptiveDecision(null);
+    fetchLiveQuestions();
   };
 
   const handleCategoryChange = (cat: string) => {
@@ -118,6 +184,20 @@ export const Practice: React.FC = () => {
     setCurrentIndex(0);
     setIsTestCompleted(false);
     setAdaptiveDecision(null);
+    if (isOnline) {
+      fetchLiveQuestions(cat, activeDifficulty);
+    }
+  };
+
+  const handleDifficultyChange = (diff: string) => {
+    setActiveDifficulty(diff);
+    setUserAnswers({});
+    setCurrentIndex(0);
+    setIsTestCompleted(false);
+    setAdaptiveDecision(null);
+    if (isOnline) {
+      fetchLiveQuestions(activeCategory, diff);
+    }
   };
 
   // Evaluation calculations
@@ -128,7 +208,7 @@ export const Practice: React.FC = () => {
     (q, idx) => userAnswers[idx] !== null && userAnswers[idx] !== undefined && userAnswers[idx] !== q.correctIndex
   ).length;
   const skippedCount = totalQuestions - (correctCount + incorrectCount);
-  const finalScorePercent = Math.round((correctCount / totalQuestions) * 100);
+  const finalScorePercent = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
 
   return (
     <div className="min-h-screen py-8 px-4 md:px-8 max-w-7xl mx-auto space-y-8 animate-in fade-in pb-20">
@@ -140,8 +220,10 @@ export const Practice: React.FC = () => {
             <span className="text-xs font-black uppercase tracking-wider text-primary">
               Adaptive Practice Center
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs text-muted-foreground font-mono">Test & Evaluation Engine</span>
+            <span className={cn("w-1.5 h-1.5 rounded-full", isOnline ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
+            <span className="text-xs text-muted-foreground font-mono">
+              {isOnline ? "Live AI Generator & Evaluator" : "Local Test Engine"}
+            </span>
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-foreground">
             Learn By Doing
@@ -154,7 +236,7 @@ export const Practice: React.FC = () => {
         <DemoProfileSwitcher />
       </div>
 
-      {/* ── FILTERS BAR ─────────────────────────────────────────── */}
+      {/* ── FILTERS & AI GENERATE BAR ───────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border">
         {/* Categories */}
         <div className="flex flex-wrap items-center gap-2">
@@ -177,31 +259,37 @@ export const Practice: React.FC = () => {
           ))}
         </div>
 
-        {/* Difficulty */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-muted-foreground">Difficulty:</span>
-          {DIFFICULTIES.map((diff) => (
-            <button
-              key={diff}
-              onClick={() => {
-                setActiveDifficulty(diff);
-                setUserAnswers({});
-                setCurrentIndex(0);
-                setIsTestCompleted(false);
-                setAdaptiveDecision(null);
-              }}
-              className={cn(
-                "px-2.5 py-1 rounded-lg text-xs font-bold transition-all",
-                activeDifficulty === diff
-                  ? diff === "Adaptive"
-                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 font-black"
-                    : "bg-card border border-primary text-primary"
-                  : "text-muted-foreground hover:bg-muted"
-              )}
-            >
-              {diff === "Adaptive" ? "⚡ Adaptive" : diff}
-            </button>
-          ))}
+        {/* Difficulty & AI Action */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-bold text-muted-foreground">Difficulty:</span>
+            {DIFFICULTIES.map((diff) => (
+              <button
+                key={diff}
+                onClick={() => handleDifficultyChange(diff)}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg text-xs font-bold transition-all",
+                  activeDifficulty === diff
+                    ? diff === "Adaptive"
+                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30 font-black"
+                      : "bg-card border border-primary text-primary"
+                    : "text-muted-foreground hover:bg-muted"
+                )}
+              >
+                {diff === "Adaptive" ? "⚡ Adaptive" : diff}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => fetchLiveQuestions()}
+            disabled={isGenerating}
+            className="px-3.5 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm disabled:opacity-50"
+            title="Generate new personalized questions using ML backend"
+          >
+            <Sparkles className={cn("w-3.5 h-3.5", isGenerating && "animate-spin")} />
+            <span>{isGenerating ? "Synthesizing AI Questions..." : "Generate AI Drill"}</span>
+          </button>
         </div>
       </div>
 
@@ -226,6 +314,11 @@ export const Practice: React.FC = () => {
                     <span className="text-xs font-mono font-semibold text-muted-foreground">
                       Question {currentIndex + 1} of {filteredQuestions.length}
                     </span>
+                    {currentQ.whyThisQuestion && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        AI Personalized
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -253,6 +346,17 @@ export const Practice: React.FC = () => {
                   />
                 </div>
               </div>
+
+              {/* WHY THIS QUESTION CALLOUT (CRITICAL FOR DEMO) */}
+              {currentQ.whyThisQuestion && (
+                <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/25 flex items-start gap-2.5 text-xs text-primary animate-in fade-in">
+                  <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-primary" />
+                  <div>
+                    <span className="font-bold">Why am I seeing this question? </span>
+                    <span className="text-foreground/90 font-medium">{currentQ.whyThisQuestion}</span>
+                  </div>
+                </div>
+              )}
 
               {/* Question Title & Prompt */}
               <div className="space-y-3">
@@ -303,18 +407,12 @@ export const Practice: React.FC = () => {
                 })}
               </div>
 
-              {/* Hint note */}
-              <div className="text-xs text-muted-foreground flex items-center gap-1.5 italic">
-                <HelpCircle className="w-4 h-4 text-primary" />
-                <span>Hint: {currentQ.hint}</span>
-              </div>
-
-              {/* Navigation & Submission Controls */}
+              {/* Action Buttons: Prev / Next / Submit */}
               <div className="flex items-center justify-between pt-4 border-t border-border">
                 <button
-                  disabled={currentIndex === 0}
                   onClick={handlePrevious}
-                  className="px-5 py-2.5 rounded-xl border border-border hover:bg-muted font-bold text-xs flex items-center gap-1.5 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+                  disabled={currentIndex === 0}
+                  className="px-4 py-2 rounded-xl text-xs font-bold border border-border text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors flex items-center gap-1.5"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Previous</span>
@@ -323,7 +421,7 @@ export const Practice: React.FC = () => {
                 {currentIndex < filteredQuestions.length - 1 ? (
                   <button
                     onClick={handleNext}
-                    className="btn-primary px-7 py-2.5 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-primary/20"
+                    className="btn-primary px-6 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-primary/20"
                   >
                     <span>Next Question</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -331,10 +429,11 @@ export const Practice: React.FC = () => {
                 ) : (
                   <button
                     onClick={handleFinishTest}
-                    className="btn-primary px-8 py-3 text-xs font-black flex items-center gap-2 shadow-xl shadow-primary/30 bg-gradient-to-r from-primary to-accent hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    disabled={answeredCount === 0}
+                    className="btn-primary px-6 py-2.5 text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-primary/25 disabled:opacity-50"
                   >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Submit & Evaluate Test</span>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Evaluate My Test</span>
                   </button>
                 )}
               </div>
@@ -342,11 +441,13 @@ export const Practice: React.FC = () => {
             </div>
           </div>
 
-          {/* ── RIGHT: QUESTION NAVIGATOR SIDEBAR (4 COLS) ──────── */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="p-6 rounded-3xl bg-card border border-border shadow-xl space-y-5">
+          {/* ── RIGHT: QUESTION PALETTE & TEST INFO (4 COLS) ─────── */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="p-6 rounded-3xl bg-card border border-border shadow-md space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-3">
-                <h3 className="text-sm font-bold text-foreground">Test Navigation</h3>
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Question Palette
+                </span>
                 <span className="text-xs font-mono text-muted-foreground">
                   {answeredCount} of {totalQuestions} Answered
                 </span>
@@ -380,11 +481,11 @@ export const Practice: React.FC = () => {
               </div>
 
               <div className="p-4 rounded-2xl bg-muted/40 border border-border text-xs text-muted-foreground space-y-2">
-                <div className="font-bold text-foreground">Test Rules:</div>
+                <div className="font-bold text-foreground">Adaptive Rules:</div>
                 <ul className="space-y-1 list-disc list-inside">
-                  <li>Answers are saved automatically as you select them.</li>
-                  <li>You can navigate back and forth to review choices.</li>
-                  <li>Full answers, scores, and explanations appear upon test submission.</li>
+                  <li>Questions adapt in difficulty based on your concept score.</li>
+                  <li>Answers are evaluated by the live ML server.</li>
+                  <li>Results update your skill radar and roadmap milestones.</li>
                 </ul>
               </div>
 
@@ -413,7 +514,7 @@ export const Practice: React.FC = () => {
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Practice Session Evaluated</span>
+                  <span>Practice Session Evaluated by AI Engine</span>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black text-foreground">
                   Test Results & Evaluation Report
@@ -495,7 +596,7 @@ export const Practice: React.FC = () => {
                 className="btn-primary px-6 py-2.5 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-primary/20"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Retake Test</span>
+                <span>Practice Another Drill</span>
               </button>
 
               <div className="flex items-center gap-3">
@@ -572,6 +673,14 @@ export const Practice: React.FC = () => {
                         </span>
                       )}
                     </div>
+
+                    {/* Why this question was chosen */}
+                    {q.whyThisQuestion && (
+                      <div className="p-3 rounded-2xl bg-primary/5 border border-primary/20 text-xs flex items-center gap-2 text-primary">
+                        <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                        <span><strong>Why recommended:</strong> {q.whyThisQuestion}</span>
+                      </div>
+                    )}
 
                     {/* Question Prompt */}
                     <p className="text-sm font-semibold text-foreground/90 leading-relaxed">
